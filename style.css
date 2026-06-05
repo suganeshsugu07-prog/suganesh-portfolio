@@ -2227,10 +2227,35 @@ body.cursor-hover #cursor-label {
 .carousel-outer {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  cursor: grab;
+
   padding: 40px 0 60px;
-  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.carousel-outer::-webkit-scrollbar{
+  display:none;
 }
 
 .carousel-track {
@@ -2245,14 +2270,30 @@ body.cursor-hover #cursor-label {
   animation-play-state: paused;
 }
 
-@keyframes carousel-scroll {
-  0% {
-    transform: translateX(-50%);
+@media(max-width:768px){
+
+  .carousel-track{
+    animation:none !important;
   }
 
-  100% {
-    transform: translateX(0);
+  .carousel-outer{
+    overflow-x:auto;
+    cursor:grab;
+    -webkit-overflow-scrolling:touch;
   }
+
+}
+
+@keyframes carousel-scroll {
+
+  0%{
+    transform:translateX(0);
+  }
+
+  100%{
+    transform:translateX(-50%);
+  }
+
 }
 
 /* ─── CARD VISUAL BACKGROUNDS ────────────────────────────── */
@@ -2727,11 +2768,13 @@ body.cursor-hover #cursor-label {
     padding: 20px 0 40px !important;
   }
 
-  .carousel-track {
-    animation: none !important; /* Disable auto scroll */
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-  }
+ .carousel-track {
+  display: flex;
+  gap: 32px;
+  width: max-content;
+  animation: carousel-scroll 40s linear infinite;
+  will-change: transform;
+}
 
   /* Hide duplicate loop cards */
   .carousel-track .project-card[aria-hidden="true"] {

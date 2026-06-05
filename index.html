@@ -118,13 +118,221 @@
         <li><a href="#testimonials">Reviews</a></li>
       </ul>
 
-      <a href="#contact" class="nav-cta">Let's Talk</a>
+      
 
-      <button class="nav-menu-btn" id="nav-menu-btn" aria-label="Toggle Menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <!-- PREMIUM 3-LINE MENU -->
+
+<div class="menu-wrap">
+
+  <button class="nav-menu-btn" id="navMenu" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="floating-menu" id="floatingMenu">
+
+    <a href="#home" class="menu-item">
+      <span>HOME</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a href="#about" class="menu-item">
+      <span>ABOUT</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a href="#services" class="menu-item">
+      <span>SERVICES</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a href="#projects" class="menu-item">
+      <span>WORKS</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a href="#contact" class="menu-item hire-btn">
+      <span>HIRE ME</span>
+      <span class="arrow">↗</span>
+    </a>
+
+  </div>
+
+</div>
+
+<style>
+
+.menu-wrap{
+  position:relative;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.nav-menu-btn{
+  width:32px;
+  height:32px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+  padding:0;
+  z-index:9999;
+}
+
+.nav-menu-btn span{
+  width:18px;
+  height:1.5px;
+  background:#ff7a00;
+  border-radius:999px;
+  transition:.35s ease;
+}
+
+.nav-menu-btn.active span:nth-child(1){
+  transform:translateY(5.5px) rotate(45deg);
+}
+
+.nav-menu-btn.active span:nth-child(2){
+  opacity:0;
+}
+
+.nav-menu-btn.active span:nth-child(3){
+  transform:translateY(-5.5px) rotate(-45deg);
+}
+
+.floating-menu{
+  position:absolute;
+  top:45px;
+  right:0;
+
+  width:220px;
+
+  padding:14px;
+
+  border-radius:22px;
+
+  background:rgba(10,10,10,.88);
+
+  backdrop-filter:blur(20px);
+
+  border:1px solid rgba(255,122,0,.15);
+
+  box-shadow:
+  0 15px 40px rgba(0,0,0,.45),
+  0 0 25px rgba(255,122,0,.08);
+
+  opacity:0;
+  visibility:hidden;
+
+  transform:
+  translateY(-10px)
+  scale(.95);
+
+  transition:.35s ease;
+}
+
+.floating-menu.active{
+  opacity:1;
+  visibility:visible;
+  transform:
+  translateY(0)
+  scale(1);
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:13px 15px;
+
+  border-radius:14px;
+
+  color:#fff;
+  text-decoration:none;
+
+  font-size:.85rem;
+  font-weight:600;
+
+  transition:.3s ease;
+
+  margin-bottom:6px;
+}
+
+.menu-item:last-child{
+  margin-bottom:0;
+}
+
+.menu-item:hover{
+  background:rgba(255,122,0,.08);
+  color:#ff7a00;
+  transform:translateX(4px);
+}
+
+.arrow{
+  opacity:0;
+  transition:.3s ease;
+}
+
+.menu-item:hover .arrow{
+  opacity:1;
+}
+
+.hire-btn{
+  background:
+  linear-gradient(
+  135deg,
+  rgba(255,122,0,.22),
+  rgba(255,122,0,.08)
+  );
+
+  border:1px solid rgba(255,122,0,.18);
+}
+
+.hire-btn:hover{
+  background:
+  linear-gradient(
+  135deg,
+  rgba(255,122,0,.35),
+  rgba(255,122,0,.15)
+  );
+}
+
+</style>
+
+<script>
+
+const menuBtn =
+document.getElementById("navMenu");
+
+const menu =
+document.getElementById("floatingMenu");
+
+menuBtn.addEventListener("click",()=>{
+
+menuBtn.classList.toggle("active");
+
+menu.classList.toggle("active");
+
+});
+
+document.addEventListener("click",(e)=>{
+
+if(
+!menu.contains(e.target)
+&&
+!menuBtn.contains(e.target)
+){
+menu.classList.remove("active");
+menuBtn.classList.remove("active");
+}
+
+});
+
+</script>
     </nav>
   </header>
 
@@ -521,16 +729,36 @@
               I'm <span style="color:#FF7A00;">SUGANESH</span><span class="accent-orange">.</span>
             </h3>
 
-            <p class="body-text fade-up"
-              style="transition-delay:0.2s; color:var(--gray); line-height:1.85; font-size:1.05rem;">
-              <em style="color:var(--white); font-style:normal; font-weight:600;">A Graphic Designer</em> based in
-              Vellore, with 2 years of creative
-              experience at Valavan Academy. I specialize in bold, scroll-stopping visuals for social
-              media, logos, branding, and thumbnails.
+            <p class="body-text fade-up">
+    <em style="color:var(--white); font-style:normal; font-weight:600;">A Graphic Designer</em> based in
+    Vellore, with 2 years of creative experience at Valavan Academy. I specialize in bold,
+    scroll-stopping visuals for social media, logos, branding, and thumbnails.
 
-              Whether it's a clean website cover or a high-impact Instagram post, I bring ideas to
-              life using Photoshop, Illustrator, and Figma.
-            </p>
+    Whether it's a clean website cover or a high-impact Instagram post, I bring ideas to
+    life using Photoshop, Illustrator, and Figma.
+</p>
+
+<style>
+.body-text{
+    color:var(--gray);
+    line-height:1.55;
+    font-size:0.95rem;
+    transition-delay:0.2s;
+}
+
+/* Mobile Responsive */
+@media (max-width:768px){
+
+    .body-text{
+        padding-left:20px;
+        padding-right:20px;
+        font-size:0.80rem;
+        line-height:1.7;
+        text-align:Center;
+    }
+
+}
+</style>
 
             <!-- Glassmorphism stats -->
             <div class="about-stats fade-up" style="transition-delay:0.3s">
