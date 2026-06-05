@@ -29,7 +29,8 @@
   </style>
 
   <style>
-    html, body {
+    html,
+    body {
       background-color: #070707 !important;
     }
   </style>
@@ -118,221 +119,213 @@
         <li><a href="#testimonials">Reviews</a></li>
       </ul>
 
-      
+
 
       <!-- PREMIUM 3-LINE MENU -->
 
-<div class="menu-wrap">
+      <div class="menu-wrap">
 
-  <button class="nav-menu-btn" id="navMenu" aria-label="Menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+        <button class="nav-menu-btn" id="navMenu" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-  <div class="floating-menu" id="floatingMenu">
+        <div class="floating-menu" id="floatingMenu">
 
-    <a href="#home" class="menu-item">
-      <span>HOME</span>
-      <span class="arrow">↗</span>
-    </a>
+          <a href="#home" class="menu-item">
+            <span>HOME</span>
+            <span class="arrow">↗</span>
+          </a>
 
-    <a href="#about" class="menu-item">
-      <span>ABOUT</span>
-      <span class="arrow">↗</span>
-    </a>
+          <a href="#about" class="menu-item">
+            <span>ABOUT</span>
+            <span class="arrow">↗</span>
+          </a>
 
-    <a href="#services" class="menu-item">
-      <span>SERVICES</span>
-      <span class="arrow">↗</span>
-    </a>
+          <a href="#services" class="menu-item">
+            <span>SERVICES</span>
+            <span class="arrow">↗</span>
+          </a>
 
-    <a href="#projects" class="menu-item">
-      <span>WORKS</span>
-      <span class="arrow">↗</span>
-    </a>
+          <a href="#projects" class="menu-item">
+            <span>WORKS</span>
+            <span class="arrow">↗</span>
+          </a>
 
-    <a href="#contact" class="menu-item hire-btn">
-      <span>HIRE ME</span>
-      <span class="arrow">↗</span>
-    </a>
+          <a href="#contact" class="menu-item hire-btn">
+            <span>HIRE ME</span>
+            <span class="arrow">↗</span>
+          </a>
 
-  </div>
+        </div>
 
-</div>
+      </div>
 
-<style>
+      <style>
+        .menu-wrap {
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+        }
 
-.menu-wrap{
-  position:relative;
-  display:flex;
-  justify-content:flex-end;
-}
+        .nav-menu-btn {
+          width: 32px;
+          height: 32px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+          padding: 0;
+          z-index: 9999;
+        }
 
-.nav-menu-btn{
-  width:32px;
-  height:32px;
-  background:none;
-  border:none;
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  gap:4px;
-  padding:0;
-  z-index:9999;
-}
+        .nav-menu-btn span {
+          width: 18px;
+          height: 1.5px;
+          background: #ff7a00;
+          border-radius: 999px;
+          transition: .35s ease;
+        }
 
-.nav-menu-btn span{
-  width:18px;
-  height:1.5px;
-  background:#ff7a00;
-  border-radius:999px;
-  transition:.35s ease;
-}
+        .nav-menu-btn.active span:nth-child(1) {
+          transform: translateY(5.5px) rotate(45deg);
+        }
 
-.nav-menu-btn.active span:nth-child(1){
-  transform:translateY(5.5px) rotate(45deg);
-}
+        .nav-menu-btn.active span:nth-child(2) {
+          opacity: 0;
+        }
 
-.nav-menu-btn.active span:nth-child(2){
-  opacity:0;
-}
+        .nav-menu-btn.active span:nth-child(3) {
+          transform: translateY(-5.5px) rotate(-45deg);
+        }
 
-.nav-menu-btn.active span:nth-child(3){
-  transform:translateY(-5.5px) rotate(-45deg);
-}
+        .floating-menu {
+          position: absolute;
+          top: 45px;
+          right: 0;
 
-.floating-menu{
-  position:absolute;
-  top:45px;
-  right:0;
+          width: 220px;
 
-  width:220px;
+          padding: 14px;
 
-  padding:14px;
+          border-radius: 22px;
 
-  border-radius:22px;
+          background: rgba(10, 10, 10, .88);
 
-  background:rgba(10,10,10,.88);
+          backdrop-filter: blur(20px);
 
-  backdrop-filter:blur(20px);
+          border: 1px solid rgba(255, 122, 0, .15);
 
-  border:1px solid rgba(255,122,0,.15);
+          box-shadow:
+            0 15px 40px rgba(0, 0, 0, .45),
+            0 0 25px rgba(255, 122, 0, .08);
 
-  box-shadow:
-  0 15px 40px rgba(0,0,0,.45),
-  0 0 25px rgba(255,122,0,.08);
+          opacity: 0;
+          visibility: hidden;
 
-  opacity:0;
-  visibility:hidden;
+          transform:
+            translateY(-10px) scale(.95);
 
-  transform:
-  translateY(-10px)
-  scale(.95);
+          transition: .35s ease;
+        }
 
-  transition:.35s ease;
-}
+        .floating-menu.active {
+          opacity: 1;
+          visibility: visible;
+          transform:
+            translateY(0) scale(1);
+        }
 
-.floating-menu.active{
-  opacity:1;
-  visibility:visible;
-  transform:
-  translateY(0)
-  scale(1);
-}
+        .menu-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
 
-.menu-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+          padding: 13px 15px;
 
-  padding:13px 15px;
+          border-radius: 14px;
 
-  border-radius:14px;
+          color: #fff;
+          text-decoration: none;
 
-  color:#fff;
-  text-decoration:none;
+          font-size: .85rem;
+          font-weight: 600;
 
-  font-size:.85rem;
-  font-weight:600;
+          transition: .3s ease;
 
-  transition:.3s ease;
+          margin-bottom: 6px;
+        }
 
-  margin-bottom:6px;
-}
+        .menu-item:last-child {
+          margin-bottom: 0;
+        }
 
-.menu-item:last-child{
-  margin-bottom:0;
-}
+        .menu-item:hover {
+          background: rgba(255, 122, 0, .08);
+          color: #ff7a00;
+          transform: translateX(4px);
+        }
 
-.menu-item:hover{
-  background:rgba(255,122,0,.08);
-  color:#ff7a00;
-  transform:translateX(4px);
-}
+        .arrow {
+          opacity: 0;
+          transition: .3s ease;
+        }
 
-.arrow{
-  opacity:0;
-  transition:.3s ease;
-}
+        .menu-item:hover .arrow {
+          opacity: 1;
+        }
 
-.menu-item:hover .arrow{
-  opacity:1;
-}
+        .hire-btn {
+          background:
+            linear-gradient(135deg,
+              rgba(255, 122, 0, .22),
+              rgba(255, 122, 0, .08));
 
-.hire-btn{
-  background:
-  linear-gradient(
-  135deg,
-  rgba(255,122,0,.22),
-  rgba(255,122,0,.08)
-  );
+          border: 1px solid rgba(255, 122, 0, .18);
+        }
 
-  border:1px solid rgba(255,122,0,.18);
-}
+        .hire-btn:hover {
+          background:
+            linear-gradient(135deg,
+              rgba(255, 122, 0, .35),
+              rgba(255, 122, 0, .15));
+        }
+      </style>
 
-.hire-btn:hover{
-  background:
-  linear-gradient(
-  135deg,
-  rgba(255,122,0,.35),
-  rgba(255,122,0,.15)
-  );
-}
+      <script>
 
-</style>
+        const menuBtn =
+          document.getElementById("navMenu");
 
-<script>
+        const menu =
+          document.getElementById("floatingMenu");
 
-const menuBtn =
-document.getElementById("navMenu");
+        menuBtn.addEventListener("click", () => {
 
-const menu =
-document.getElementById("floatingMenu");
+          menuBtn.classList.toggle("active");
 
-menuBtn.addEventListener("click",()=>{
+          menu.classList.toggle("active");
 
-menuBtn.classList.toggle("active");
+        });
 
-menu.classList.toggle("active");
+        document.addEventListener("click", (e) => {
 
-});
+          if (
+            !menu.contains(e.target)
+            &&
+            !menuBtn.contains(e.target)
+          ) {
+            menu.classList.remove("active");
+            menuBtn.classList.remove("active");
+          }
 
-document.addEventListener("click",(e)=>{
+        });
 
-if(
-!menu.contains(e.target)
-&&
-!menuBtn.contains(e.target)
-){
-menu.classList.remove("active");
-menuBtn.classList.remove("active");
-}
-
-});
-
-</script>
+      </script>
     </nav>
   </header>
 
@@ -696,6 +689,135 @@ menuBtn.classList.remove("active");
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg></div>
+            <script>
+              const outer = document.querySelector(".carousel-outer");
+              const track = document.querySelector(".carousel-track");
+
+              // const isMobile = () => window.innerWidth <= 768;
+
+              let isDown = false;
+              let isScrollingActive = true;
+              let startX;
+              let scrollLeft;
+              let scrollTimeout;
+              let wrapOffset = 0;
+
+              // Dynamically cache the start offset of duplicate cards to prevent layout thrashing
+              function updateWrapOffset() {
+                const cards = Array.from(track.querySelectorAll('.project-card'));
+                if (cards.length >= 7 && cards[6]) {
+                  wrapOffset = cards[6].offsetLeft;
+                } else {
+                  wrapOffset = track.scrollWidth / 2;
+                }
+              }
+
+              // Initial calculation & updates on window resize or orient change
+              updateWrapOffset();
+              window.addEventListener("load", updateWrapOffset);
+              window.addEventListener("resize", updateWrapOffset);
+              window.addEventListener("orientationchange", () => setTimeout(updateWrapOffset, 200));
+
+              // Auto marquee
+              let autoSpeed = 1;
+
+              function autoScroll() {
+                if (isMobile()) {
+                  // Mobile Javascript scroll
+                  if (isScrollingActive && !isDown) {
+                    outer.scrollLeft += 1;
+                    if (wrapOffset > 0 && outer.scrollLeft >= wrapOffset) {
+                      outer.scrollLeft -= wrapOffset;
+                    }
+                  }
+                } else {
+                  // Desktop Original scroll
+                  if (!isDown) {
+                    outer.scrollLeft += autoSpeed;
+                    if (
+                      outer.scrollLeft >=
+                      (track.scrollWidth - outer.clientWidth) / 2
+                    ) {
+                      outer.scrollLeft = 0;
+                    }
+                  }
+                }
+                requestAnimationFrame(autoScroll);
+              }
+
+              requestAnimationFrame(autoScroll);
+
+              // Seamless Scroll Wrap-Around & Resume logic on Mobile
+              let isWrapping = false;
+              outer.addEventListener("scroll", () => {
+                if (!isMobile()) return;
+                if (isWrapping || wrapOffset <= 0) return;
+
+                // Seamless Infinite Loop checks (both directions)
+                if (outer.scrollLeft >= wrapOffset) {
+                  isWrapping = true;
+                  outer.scrollLeft -= wrapOffset;
+                  if (isDown) scrollLeft -= wrapOffset;
+                  isWrapping = false;
+                } else if (outer.scrollLeft <= 0.5) {
+                  isWrapping = true;
+                  outer.scrollLeft += wrapOffset;
+                  if (isDown) scrollLeft += wrapOffset;
+                  isWrapping = false;
+                }
+
+                // Debounce to resume auto-scroll after native swipe momentum completes
+                if (!isDown) {
+                  clearTimeout(scrollTimeout);
+                  isScrollingActive = false;
+                  scrollTimeout = setTimeout(() => {
+                    isScrollingActive = true;
+                  }, 100);
+                }
+              });
+
+              // Mouse Drag (for desktop / mouse users)
+              outer.addEventListener("mousedown", (e) => {
+                isDown = true;
+                isScrollingActive = false;
+                startX = e.pageX;
+                scrollLeft = outer.scrollLeft;
+                outer.style.cursor = "grabbing";
+              });
+
+              window.addEventListener("mouseup", () => {
+                isDown = false;
+                outer.style.cursor = "grab";
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                  isScrollingActive = true;
+                }, 200);
+              });
+
+              outer.addEventListener("mousemove", (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const walk = (e.pageX - startX) * 2;
+                outer.scrollLeft = scrollLeft - walk;
+              });
+
+              // Touch Swiping (on mobile we let the browser handle native touch scroll,
+              // but we capture start/end to pause/resume marquee smoothly)
+              outer.addEventListener("touchstart", (e) => {
+                isDown = true;
+                isScrollingActive = false;
+                startX = e.touches[0].pageX;
+                scrollLeft = outer.scrollLeft;
+              });
+
+              outer.addEventListener("touchend", () => {
+                isDown = false;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                  isScrollingActive = true;
+                }, 200);
+              });
+            </script>
           </article>
 
         </div>
@@ -730,35 +852,33 @@ menuBtn.classList.remove("active");
             </h3>
 
             <p class="body-text fade-up">
-    <em style="color:var(--white); font-style:normal; font-weight:600;">A Graphic Designer</em> based in
-    Vellore, with 2 years of creative experience at Valavan Academy. I specialize in bold,
-    scroll-stopping visuals for social media, logos, branding, and thumbnails.
+              <em style="color:var(--white); font-style:normal; font-weight:600;">A Graphic Designer</em> based in
+              Vellore, with 2 years of creative experience at Valavan Academy. I specialize in bold,
+              scroll-stopping visuals for social media, logos, branding, and thumbnails.
 
-    Whether it's a clean website cover or a high-impact Instagram post, I bring ideas to
-    life using Photoshop, Illustrator, and Figma.
-</p>
+              Whether it's a clean website cover or a high-impact Instagram post, I bring ideas to
+              life using Photoshop, Illustrator, and Figma.
+            </p>
 
-<style>
-.body-text{
-    color:var(--gray);
-    line-height:1.55;
-    font-size:0.95rem;
-    transition-delay:0.2s;
-}
+            <style>
+              .body-text {
+                color: var(--gray);
+                line-height: 1.55;
+                font-size: 0.95rem;
+                transition-delay: 0.2s;
+              }
 
-/* Mobile Responsive */
-@media (max-width:768px){
+              /* Mobile Responsive */
+              @media (max-width:768px) {
 
-    .body-text{
-        padding-left:20px;
-        padding-right:20px;
-        font-size:0.80rem;
-        line-height:1.7;
-        text-align:Center;
-    }
+                .body-text {
+                  font-size: 0.80rem;
+                  line-height: 1.7;
+                  text-align: Center;
+                }
 
-}
-</style>
+              }
+            </style>
 
             <!-- Glassmorphism stats -->
             <div class="about-stats fade-up" style="transition-delay:0.3s">
@@ -819,7 +939,8 @@ menuBtn.classList.remove("active");
               <span class="service-card-num">01</span>
               <div class="service-icon">🎨</div>
               <h3 class="service-title">Brand Identity</h3>
-              <p class="service-desc">Logo design, visual systems, brand guidelines, and identity packages that define who
+              <p class="service-desc">Logo design, visual systems, brand guidelines, and identity packages that define
+                who
                 you are and how the world sees you.</p>
             </div>
           </div>
@@ -839,7 +960,8 @@ menuBtn.classList.remove("active");
               <span class="service-card-num">03</span>
               <div class="service-icon">🎬</div>
               <h3 class="service-title">YouTube Thumbnails</h3>
-              <p class="service-desc">High-CTR thumbnail designs that demand clicks. Data-informed aesthetics built around
+              <p class="service-desc">High-CTR thumbnail designs that demand clicks. Data-informed aesthetics built
+                around
                 your audience psychology.</p>
             </div>
           </div>
@@ -1140,7 +1262,7 @@ menuBtn.classList.remove("active");
   <div id="hire-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-card">
       <button class="modal-close-btn" id="close-modal-btn" aria-label="Close Modal">&times;</button>
-      
+
       <div class="modal-header">
         <h2 class="modal-title">Let's Build Something Amazing 🚀</h2>
         <p class="modal-subtitle">Tell me about your project and I'll get back to you on WhatsApp.</p>
@@ -1185,13 +1307,15 @@ menuBtn.classList.remove("active");
         <div class="form-group">
           <textarea id="hire-details" name="details" required placeholder=" " rows="4"></textarea>
           <label for="hire-details">Project Details</label>
-          <div class="textarea-placeholder-tip">Tell me about your project, goals, timeline, references, and requirements...</div>
+          <div class="textarea-placeholder-tip">Tell me about your project, goals, timeline, references, and
+            requirements...</div>
         </div>
 
         <button type="submit" class="modal-submit-btn">
           <span>Send via WhatsApp</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z"/>
+            <path
+              d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z" />
           </svg>
         </button>
       </form>
@@ -1200,8 +1324,10 @@ menuBtn.classList.remove("active");
       <div class="modal-footer">
         <span class="footer-name">Suganesh</span>
         <a href="https://wa.me/917305290305" target="_blank" class="footer-phone" rel="noopener">
-          <svg class="wa-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z"/>
+          <svg class="wa-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z" />
           </svg>
           +91 7305290305
         </a>

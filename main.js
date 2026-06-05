@@ -335,23 +335,23 @@ function initHeroParallax() {
 function initStarCloud() {
   const canvas = document.getElementById('starcloud-canvas');
   const glowEl = document.querySelector('.hero-starcloud-glow');
-  const hero   = document.getElementById('hero');
+  const hero = document.getElementById('hero');
   if (!canvas || !hero) return;
 
   const ctx = canvas.getContext('2d');
   const mobile = isMobile();
 
   /* ── Config ─────────────────────────────────────────────── */
-  const PARTICLE_COUNT  = mobile ? 50 : 120;
-  const BASE_OPACITY    = mobile ? 0.10 : 0.12; // max alpha cap (8–15% range)
-  const FLOAT_SPEED     = 0.15;   // very slow drift
-  const MOUSE_STRENGTH  = mobile ? 0 : 6;       // max px nudge from mouse
-  const MOUSE_LERP      = 0.03;   // how lazily particles follow mouse
-  const COLORS          = ['255,122,0', '255,149,0']; // #ff7a00 / #ff9500
+  const PARTICLE_COUNT = mobile ? 50 : 120;
+  const BASE_OPACITY = mobile ? 0.10 : 0.12; // max alpha cap (8–15% range)
+  const FLOAT_SPEED = 0.15;   // very slow drift
+  const MOUSE_STRENGTH = mobile ? 0 : 6;       // max px nudge from mouse
+  const MOUSE_LERP = 0.03;   // how lazily particles follow mouse
+  const COLORS = ['255,122,0', '255,149,0']; // #ff7a00 / #ff9500
 
   let W, H;
   function resize() {
-    W = canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    W = canvas.width = canvas.offsetWidth || window.innerWidth;
     H = canvas.height = canvas.offsetHeight || window.innerHeight;
   }
   resize();
@@ -359,23 +359,23 @@ function initStarCloud() {
 
   /* ── Particle factory ───────────────────────────────────── */
   function makeParticle(randomY) {
-    const depth  = 0.3 + Math.random() * 0.7;         // 0.3–1.0 (depth layers)
-    const col    = COLORS[Math.floor(Math.random() * COLORS.length)];
-    const speed  = FLOAT_SPEED * (0.4 + depth * 0.6);
+    const depth = 0.3 + Math.random() * 0.7;         // 0.3–1.0 (depth layers)
+    const col = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const speed = FLOAT_SPEED * (0.4 + depth * 0.6);
     return {
-      x  : Math.random() * W,
-      y  : randomY ? Math.random() * H : H + 10,
-      r  : (0.6 + Math.random() * 1.8) * depth,       // 0.2–2.6px
-      vx : (Math.random() - 0.5) * speed * 0.4,       // lateral drift
-      vy : -(speed + Math.random() * speed * 0.5),    // upward float
+      x: Math.random() * W,
+      y: randomY ? Math.random() * H : H + 10,
+      r: (0.6 + Math.random() * 1.8) * depth,       // 0.2–2.6px
+      vx: (Math.random() - 0.5) * speed * 0.4,       // lateral drift
+      vy: -(speed + Math.random() * speed * 0.5),    // upward float
       alpha: BASE_OPACITY * (0.5 + depth * 0.5),      // 4–12% opacity
       col,
       depth,
       // mouse-parallax accumulators
-      mx : 0, my : 0,
+      mx: 0, my: 0,
       // twinkle
-      twinkleSpeed : 0.005 + Math.random() * 0.015,
-      twinkleAngle : Math.random() * Math.PI * 2,
+      twinkleSpeed: 0.005 + Math.random() * 0.015,
+      twinkleAngle: Math.random() * Math.PI * 2,
     };
   }
 
@@ -392,9 +392,9 @@ function initStarCloud() {
   let mouseNX = 0, mouseNY = 0; // normalized -0.5 → +0.5
   if (!mobile) {
     hero.addEventListener('mousemove', e => {
-      const r  = hero.getBoundingClientRect();
-      mouseNX  = (e.clientX - r.left)  / r.width  - 0.5;
-      mouseNY  = (e.clientY - r.top)   / r.height - 0.5;
+      const r = hero.getBoundingClientRect();
+      mouseNX = (e.clientX - r.left) / r.width - 0.5;
+      mouseNY = (e.clientY - r.top) / r.height - 0.5;
     }, { passive: true });
     hero.addEventListener('mouseleave', () => {
       mouseNX = 0; mouseNY = 0;
@@ -407,10 +407,10 @@ function initStarCloud() {
   /* ── RAF draw loop (hooked into global rafCbs) ──────────── */
   rafCbs.add(() => {
     /* Scroll-fade: fade out over the hero height */
-    const scrollY   = window.scrollY;
-    const heroH     = hero.offsetHeight || window.innerHeight;
-    scrollOpacity   = Math.max(0, 1 - (scrollY / (heroH * 0.75)));
-    canvas.style.opacity  = scrollOpacity;
+    const scrollY = window.scrollY;
+    const heroH = hero.offsetHeight || window.innerHeight;
+    scrollOpacity = Math.max(0, 1 - (scrollY / (heroH * 0.75)));
+    canvas.style.opacity = scrollOpacity;
     if (glowEl) glowEl.style.opacity = scrollOpacity * 0.85;
 
     // No need to draw if scrolled past hero
@@ -436,7 +436,7 @@ function initStarCloud() {
       }
 
       /* Wrap around edges */
-      if (p.y < -p.r * 2)  { Object.assign(p, makeParticle(false)); }
+      if (p.y < -p.r * 2) { Object.assign(p, makeParticle(false)); }
       if (p.x < -p.r * 20) { p.x = W + p.r * 5; }
       if (p.x > W + p.r * 20) { p.x = -p.r * 5; }
 
@@ -448,9 +448,9 @@ function initStarCloud() {
       // Larger particles get a soft glow halo
       if (p.r > 1.2) {
         const grad = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, p.r * 4);
-        grad.addColorStop(0,   `rgba(${p.col},${alpha})`);
+        grad.addColorStop(0, `rgba(${p.col},${alpha})`);
         grad.addColorStop(0.4, `rgba(${p.col},${alpha * 0.3})`);
-        grad.addColorStop(1,   `rgba(${p.col},0)`);
+        grad.addColorStop(1, `rgba(${p.col},0)`);
         ctx.beginPath();
         ctx.arc(drawX, drawY, p.r * 4, 0, Math.PI * 2);
         ctx.fillStyle = grad;
@@ -980,29 +980,29 @@ function initServiceCards() {
 
   rafCbs.add(() => {
     const vh = window.innerHeight;
-    
+
     wrappers.forEach((wrapper, i) => {
       const card = cards[i];
       if (!card) return;
-      
+
       const rect = wrapper.getBoundingClientRect();
       const stickyTop = 80; // Matches CSS top: 80px for all cards
-      
+
       // Compute progress once the wrapper passes the sticky zone
       const y = rect.top - stickyTop;
-      
+
       if (y < 0) {
         // Card is sticky and is being overlapped by subsequent cards
         const range = rect.height || (vh * 0.5);
         const factor = clamp(Math.abs(y) / range, 0, 1);
-        
+
         // Scale down, tilt back, shift upwards, fade and blur
         const scale = 1 - factor * 0.08;
         const rotateX = -factor * 12;
         const translateY = -factor * 20;
         const opacity = 1 - factor * 0.45;
         const blur = factor * 3;
-        
+
         card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) scale(${scale}) translateY(${translateY}px)`;
         card.style.opacity = `${opacity}`;
         card.style.filter = blur > 0.15 ? `blur(${blur}px)` : 'none';
@@ -1047,14 +1047,14 @@ function initHologramBackground() {
   const ctx = canvas.getContext('2d');
 
   /* GPU promotion */
-  canvas.style.willChange     = 'transform';
-  canvas.style.transform      = 'translateZ(0)';
+  canvas.style.willChange = 'transform';
+  canvas.style.transform = 'translateZ(0)';
   canvas.style.backfaceVisibility = 'hidden';
 
   const mobile = isMobile();
 
   /* ── Palette ─────────────────────────────────────────────── */
-  const C_PRIMARY   = '255,122,0';   // #ff7a00
+  const C_PRIMARY = '255,122,0';   // #ff7a00
   const C_SECONDARY = '255,149,0';   // #ff9500
   const C_HIGHLIGHT = '255,179,71';  // #ffb347
 
@@ -1063,15 +1063,15 @@ function initHologramBackground() {
 
   /* ── Slow ambient blobs (always-on warmth) ───────────────── */
   const ambientBlobs = [
-    { nx: 0.15, ny: 0.3,  r: 520, speed: 0.00028, angle: 0,           opacity: mobile ? 0.018 : 0.030 },
-    { nx: 0.85, ny: 0.72, r: 600, speed: 0.00018, angle: Math.PI,     opacity: mobile ? 0.014 : 0.022 },
-    { nx: 0.5,  ny: 0.12, r: 420, speed: 0.00022, angle: Math.PI / 2, opacity: mobile ? 0.012 : 0.018 },
+    { nx: 0.15, ny: 0.3, r: 520, speed: 0.00028, angle: 0, opacity: mobile ? 0.018 : 0.030 },
+    { nx: 0.85, ny: 0.72, r: 600, speed: 0.00018, angle: Math.PI, opacity: mobile ? 0.014 : 0.022 },
+    { nx: 0.5, ny: 0.12, r: 420, speed: 0.00022, angle: Math.PI / 2, opacity: mobile ? 0.012 : 0.018 },
   ];
   /* Seed initial positions */
   ambientBlobs.forEach(b => { b.x = W * b.nx; b.y = H * b.ny; b.tx = b.x; b.ty = b.y; });
 
   function resize() {
-    W = canvas.width  = window.innerWidth;
+    W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
     ambientBlobs.forEach(b => { b.tx = W * b.nx; b.ty = H * b.ny; });
   }
@@ -1084,20 +1084,20 @@ function initHologramBackground() {
   let cursorActive = true;
 
   /* Light streak trail — last N positions */
-  const TRAIL_LEN  = mobile ? 0 : 14;
-  const trailPos   = [];
+  const TRAIL_LEN = mobile ? 0 : 14;
+  const trailPos = [];
 
   /* ── Inactivity fade ─────────────────────────────────────── */
   const INACTIVE_DELAY = 3000; // ms before fade starts
-  let   spotOpacity    = 1.0;  // current rendered opacity (lerped)
-  let   spotTarget     = 1.0;  // 0 when idle, 1 when active
+  let spotOpacity = 1.0;  // current rendered opacity (lerped)
+  let spotTarget = 1.0;  // 0 when idle, 1 when active
 
   window.addEventListener('mousemove', e => {
     targetX = e.clientX;
     targetY = e.clientY;
-    lastMoveTime  = performance.now();
-    cursorActive  = true;
-    spotTarget    = 1.0;
+    lastMoveTime = performance.now();
+    cursorActive = true;
+    spotTarget = 1.0;
   }, { passive: true });
 
   /* ── Section intensity map ───────────────────────────────── */
@@ -1105,11 +1105,11 @@ function initHologramBackground() {
   function getSectionMultiplier() {
     const el = document.elementFromPoint(mouseX, mouseY);
     if (!el) return 0.7;
-    const section = el.closest('#hero')         ? 1.0  // strongest
-                  : el.closest('.project-card') ? 0.85  // cards boost
-                  : el.closest('.btn-primary, .btn-secondary, .nav-cta') ? 0.9
-                  : el.closest('#about, #services, #skills, #testimonials, #contact') ? 0.55
-                  : 0.7;
+    const section = el.closest('#hero') ? 1.0  // strongest
+      : el.closest('.project-card') ? 0.85  // cards boost
+        : el.closest('.btn-primary, .btn-secondary, .nav-cta') ? 0.9
+          : el.closest('#about, #services, #skills, #testimonials, #contact') ? 0.55
+            : 0.7;
     return section;
   }
 
@@ -1117,22 +1117,22 @@ function initHologramBackground() {
   if (!mobile) {
     function addBloom(el, size, strength) {
       el.style.transition = 'box-shadow 0.4s cubic-bezier(0.16,1,0.3,1)';
-      el.style.boxShadow  = `0 0 ${size}px ${Math.round(size/3)}px rgba(${C_PRIMARY},${strength}), 0 0 ${size*2}px rgba(${C_PRIMARY},${strength * 0.3})`;
+      el.style.boxShadow = `0 0 ${size}px ${Math.round(size / 3)}px rgba(${C_PRIMARY},${strength}), 0 0 ${size * 2}px rgba(${C_PRIMARY},${strength * 0.3})`;
     }
     function removeBloom(el) {
       el.style.boxShadow = '';
     }
 
     document.addEventListener('mouseover', e => {
-      const btn  = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
+      const btn = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
       const card = e.target.closest('.project-card, .service-card');
-      if (btn)  addBloom(btn,  28, 0.35);
+      if (btn) addBloom(btn, 28, 0.35);
       if (card) addBloom(card, 45, 0.18);
     });
     document.addEventListener('mouseout', e => {
-      const btn  = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
+      const btn = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
       const card = e.target.closest('.project-card, .service-card');
-      if (btn)  removeBloom(btn);
+      if (btn) removeBloom(btn);
       if (card) removeBloom(card);
     });
   }
@@ -1147,7 +1147,7 @@ function initHologramBackground() {
     /* Inactivity check */
     if (now - lastMoveTime > INACTIVE_DELAY) {
       cursorActive = false;
-      spotTarget   = 0.0;
+      spotTarget = 0.0;
     }
     spotOpacity = lerp(spotOpacity, spotTarget, 0.025); // very smooth fade
 
@@ -1178,9 +1178,9 @@ function initHologramBackground() {
       b.y = b.ty + Math.sin(b.angle) * 55;
 
       const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-      g.addColorStop(0,   `rgba(${C_PRIMARY},${b.opacity})`);
+      g.addColorStop(0, `rgba(${C_PRIMARY},${b.opacity})`);
       g.addColorStop(0.5, `rgba(${C_PRIMARY},${b.opacity * 0.35})`);
-      g.addColorStop(1,   `rgba(${C_PRIMARY},0)`);
+      g.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
       ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
       ctx.fillStyle = g;
@@ -1194,10 +1194,10 @@ function initHologramBackground() {
       /* Wide corona — warm ambient spill */
       const r1 = mobile ? 260 : 460;
       const g1 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r1);
-      g1.addColorStop(0,    `rgba(${C_PRIMARY},${0.10 * so})`);
+      g1.addColorStop(0, `rgba(${C_PRIMARY},${0.10 * so})`);
       g1.addColorStop(0.35, `rgba(${C_PRIMARY},${0.048 * so})`);
       g1.addColorStop(0.65, `rgba(${C_SECONDARY},${0.018 * so})`);
-      g1.addColorStop(1,    `rgba(${C_PRIMARY},0)`);
+      g1.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, r1, 0, Math.PI * 2);
       ctx.fillStyle = g1;
@@ -1206,9 +1206,9 @@ function initHologramBackground() {
       /* Mid glow — warm focused light */
       const r2 = mobile ? 130 : 210;
       const g2 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r2);
-      g2.addColorStop(0,   `rgba(${C_SECONDARY},${0.18 * so})`);
+      g2.addColorStop(0, `rgba(${C_SECONDARY},${0.18 * so})`);
       g2.addColorStop(0.4, `rgba(${C_PRIMARY},${0.09 * so})`);
-      g2.addColorStop(1,   `rgba(${C_PRIMARY},0)`);
+      g2.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, r2, 0, Math.PI * 2);
       ctx.fillStyle = g2;
@@ -1217,9 +1217,9 @@ function initHologramBackground() {
       /* Hot core — bright highlight centre */
       const r3 = mobile ? 55 : 80;
       const g3 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r3);
-      g3.addColorStop(0,    `rgba(${C_HIGHLIGHT},${0.22 * so})`);
+      g3.addColorStop(0, `rgba(${C_HIGHLIGHT},${0.22 * so})`);
       g3.addColorStop(0.45, `rgba(${C_SECONDARY},${0.10 * so})`);
-      g3.addColorStop(1,    `rgba(${C_PRIMARY},0)`);
+      g3.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, r3, 0, Math.PI * 2);
       ctx.fillStyle = g3;
@@ -1228,9 +1228,9 @@ function initHologramBackground() {
       /* ── 3. Motion light-streak trail ── */
       if (!mobile && trailPos.length > 1) {
         trailPos.forEach((pt, i) => {
-          const t     = 1 - i / TRAIL_LEN;  // 1 → 0 (newest → oldest)
+          const t = 1 - i / TRAIL_LEN;  // 1 → 0 (newest → oldest)
           const alpha = t * t * 0.045 * so; // quadratic falloff
-          const rT    = 35 * t;
+          const rT = 35 * t;
           if (alpha < 0.002) return;
           const gT = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, rT);
           gT.addColorStop(0, `rgba(${C_HIGHLIGHT},${alpha})`);
@@ -1248,9 +1248,9 @@ function initHologramBackground() {
       const idleAlpha = (1 - spotOpacity) * 0.030;
       const rI = 500;
       const gI = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, rI);
-      gI.addColorStop(0,   `rgba(${C_PRIMARY},${idleAlpha})`);
+      gI.addColorStop(0, `rgba(${C_PRIMARY},${idleAlpha})`);
       gI.addColorStop(0.6, `rgba(${C_PRIMARY},${idleAlpha * 0.3})`);
-      gI.addColorStop(1,   `rgba(${C_PRIMARY},0)`);
+      gI.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, rI, 0, Math.PI * 2);
       ctx.fillStyle = gI;
@@ -1372,7 +1372,7 @@ function initAboutParticles() {
 /* ─── SMOOTH SCROLL TO HELPER ───────────────────────────── */
 function smoothScrollTo(targetEl, duration = 1000) {
   if (!targetEl) return;
-  
+
   const start = window.scrollY;
   const target = targetEl.getBoundingClientRect().top + start;
   const distance = target - start;
@@ -1385,7 +1385,7 @@ function smoothScrollTo(targetEl, duration = 1000) {
     glowTrail.id = 'scroll-glow-trail';
     document.body.appendChild(glowTrail);
   }
-  
+
   glowTrail.style.display = 'block';
   glowTrail.offsetHeight; // Force reflow
   glowTrail.style.opacity = '1';
@@ -1402,7 +1402,7 @@ function smoothScrollTo(targetEl, duration = 1000) {
     const progress = timestamp - startTime;
     const percentage = Math.min(progress / duration, 1);
     const eased = easeInOutQuart(percentage);
-    
+
     const nextScrollY = start + distance * eased;
     window.scrollTo(0, nextScrollY);
 

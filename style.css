@@ -2178,10 +2178,35 @@ body.cursor-hover #cursor-label {
     min-height: 300px;
   }
 
+  .about-content {
+    align-items: center;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .about-content .hero-ctas {
+    width: 100% !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
   .about-stats {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     padding: 20px 14px;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .stat-number {
+    font-size: clamp(1.4rem, 5vw, 2.0rem) !important;
+  }
+
+  .stat-label {
+    font-size: 9px !important;
   }
 
   .testimonial-card {
@@ -2763,32 +2788,33 @@ body.cursor-hover #cursor-label {
   /* Mobile Snap Carousel for Projects */
   .carousel-outer {
     overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
+    scroll-snap-type: none !important; /* Disable snapping to allow smooth scrolling marquee */
     -webkit-overflow-scrolling: touch !important;
     padding: 20px 0 40px !important;
+    scrollbar-width: none !important; /* Hide scrollbar */
   }
-
- .carousel-track {
-  display: flex;
-  gap: 32px;
-  width: max-content;
-  animation: carousel-scroll 40s linear infinite;
-  will-change: transform;
-}
-
-  /* Hide duplicate loop cards */
-  .carousel-track .project-card[aria-hidden="true"] {
+  
+  .carousel-outer::-webkit-scrollbar {
     display: none !important;
   }
 
-  .project-card {
-    scroll-snap-align: center !important;
-    width: 80vw !important;
-    margin-right: 16px !important;
+  .carousel-track {
+    display: flex !important;
+    gap: 32px !important;
+    width: max-content !important;
+    animation: none !important; /* Disable CSS scroll animation on mobile so JS controls it smoothly */
+    transform: none !important;
   }
 
-  .project-card:last-child {
-    margin-right: 0 !important;
+  /* Keep duplicate loop cards visible for seamless infinite loop on mobile */
+  .carousel-track .project-card[aria-hidden="true"] {
+    display: block !important;
+  }
+
+  .project-card {
+    scroll-snap-align: none !important; /* Disable snap alignment */
+    width: 80vw !important;
+    margin-right: 0 !important; /* Rely on gap from parent track for layout */
   }
 
   /* General mobile animations visibility reset */
@@ -2866,13 +2892,13 @@ body.cursor-hover #cursor-label {
 
 /* Modal Card Glassmorphism system */
 .modal-card {
-  width: 95%;
-  max-width: 700px;
-  max-height: 90vh;
+  width: 90%;
+  max-width: 550px;
+  max-height: 85vh;
   background: #070707;
   border: 1.5px solid rgba(255, 122, 0, 0.25);
   border-radius: 24px;
-  padding: 48px 40px;
+  padding: 36px 32px;
   position: relative;
   overflow-y: auto;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 122, 0, 0.08);
@@ -3180,4 +3206,81 @@ body.cursor-hover #cursor-label {
   color: #25d366;
   filter: drop-shadow(0 0 6px rgba(37, 211, 102, 0.45));
 }
+
+/* Mobile responsive overrides for Hire Me Modal */
+@media (max-width: 768px) {
+  .modal-overlay {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+  
+  .modal-card {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    padding: 24px 20px !important;
+    border-radius: 20px !important;
+    margin: auto !important;
+  }
+  
+  .modal-header {
+    margin-bottom: 24px !important;
+  }
+  
+  .modal-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .modal-subtitle {
+    font-size: 0.88rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .modal-form {
+    gap: 16px !important;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 14px 18px !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .form-group label {
+    left: 18px !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .form-group textarea ~ label {
+    top: 24px !important;
+  }
+  
+  .form-group input:focus ~ label,
+  .form-group input:not(:placeholder-shown) ~ label,
+  .form-group textarea:focus ~ label,
+  .form-group textarea:not(:placeholder-shown) ~ label,
+  .form-group select:focus ~ label,
+  .form-group select:valid ~ label {
+    left: 14px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .textarea-placeholder-tip {
+    left: 18px !important;
+    top: 48px !important;
+    font-size: 0.8rem !important;
+    max-width: calc(100% - 36px) !important;
+  }
+  
+  .modal-submit-btn {
+    padding: 14px !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .modal-footer {
+    margin-top: 24px !important;
+    padding-top: 16px !important;
+  }
 }
