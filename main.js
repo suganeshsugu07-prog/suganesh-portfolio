@@ -246,63 +246,8 @@ function initHero() {
     if (hint) Object.assign(hint.style, { transition: 'opacity 1s', opacity: '1' });
   }, 1200);
 
-  // Init particles
-  initHeroParticles();
-
   // Mouse parallax hero
   initHeroParallax();
-
-  // StarCloud background effect
-  initStarCloud();
-}
-
-/* ─── HERO PARTICLES ─────────────────────────────────────── */
-function initHeroParticles() {
-  const canvas = $('#hero-particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  let W, H, particles = [];
-
-  function resize() {
-    W = canvas.width = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-
-  resize();
-  window.addEventListener('resize', resize);
-
-  function randomParticle() {
-    return {
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 2 + 0.5,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: -Math.random() * 0.5 - 0.1,
-      life: Math.random(),
-      maxLife: Math.random() * 0.6 + 0.4,
-    };
-  }
-
-  for (let i = 0; i < 120; i++) particles.push(randomParticle());
-
-  rafCbs.add(() => {
-    ctx.clearRect(0, 0, W, H);
-
-    particles.forEach((p, i) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= 0.004;
-
-      if (p.life <= 0) particles[i] = randomParticle();
-
-      const alpha = Math.min(p.life / 0.3, 1) * 0.7;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,122,0,${alpha})`;
-      ctx.fill();
-    });
-  });
 }
 
 /* ─── HERO MOUSE PARALLAX ────────────────────────────────── */
@@ -331,141 +276,6 @@ function initHeroParallax() {
   });
 }
 
-/* ─── STARCLOUD BACKGROUND EFFECT ───────────────────────── */
-function initStarCloud() {
-  const canvas = document.getElementById('starcloud-canvas');
-  const glowEl = document.querySelector('.hero-starcloud-glow');
-  const hero = document.getElementById('hero');
-  if (!canvas || !hero) return;
-
-  const ctx = canvas.getContext('2d');
-  const mobile = isMobile();
-
-  /* ── Config ─────────────────────────────────────────────── */
-  const PARTICLE_COUNT = mobile ? 50 : 120;
-  const BASE_OPACITY = mobile ? 0.10 : 0.12; // max alpha cap (8–15% range)
-  const FLOAT_SPEED = 0.15;   // very slow drift
-  const MOUSE_STRENGTH = mobile ? 0 : 6;       // max px nudge from mouse
-  const MOUSE_LERP = 0.03;   // how lazily particles follow mouse
-  const COLORS = ['255,122,0', '255,149,0']; // #ff7a00 / #ff9500
-
-  let W, H;
-  function resize() {
-    W = canvas.width = canvas.offsetWidth || window.innerWidth;
-    H = canvas.height = canvas.offsetHeight || window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', () => { resize(); buildParticles(); }, { passive: true });
-
-  /* ── Particle factory ───────────────────────────────────── */
-  function makeParticle(randomY) {
-    const depth = 0.3 + Math.random() * 0.7;         // 0.3–1.0 (depth layers)
-    const col = COLORS[Math.floor(Math.random() * COLORS.length)];
-    const speed = FLOAT_SPEED * (0.4 + depth * 0.6);
-    return {
-      x: Math.random() * W,
-      y: randomY ? Math.random() * H : H + 10,
-      r: (0.6 + Math.random() * 1.8) * depth,       // 0.2–2.6px
-      vx: (Math.random() - 0.5) * speed * 0.4,       // lateral drift
-      vy: -(speed + Math.random() * speed * 0.5),    // upward float
-      alpha: BASE_OPACITY * (0.5 + depth * 0.5),      // 4–12% opacity
-      col,
-      depth,
-      // mouse-parallax accumulators
-      mx: 0, my: 0,
-      // twinkle
-      twinkleSpeed: 0.005 + Math.random() * 0.015,
-      twinkleAngle: Math.random() * Math.PI * 2,
-    };
-  }
-
-  let particles = [];
-  function buildParticles() {
-    particles = [];
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push(makeParticle(true));
-    }
-  }
-  buildParticles();
-
-  /* ── Mouse tracking ─────────────────────────────────────── */
-  let mouseNX = 0, mouseNY = 0; // normalized -0.5 → +0.5
-  if (!mobile) {
-    hero.addEventListener('mousemove', e => {
-      const r = hero.getBoundingClientRect();
-      mouseNX = (e.clientX - r.left) / r.width - 0.5;
-      mouseNY = (e.clientY - r.top) / r.height - 0.5;
-    }, { passive: true });
-    hero.addEventListener('mouseleave', () => {
-      mouseNX = 0; mouseNY = 0;
-    });
-  }
-
-  /* ── Scroll-fade state ──────────────────────────────────── */
-  let scrollOpacity = 1;
-
-  /* ── RAF draw loop (hooked into global rafCbs) ──────────── */
-  rafCbs.add(() => {
-    /* Scroll-fade: fade out over the hero height */
-    const scrollY = window.scrollY;
-    const heroH = hero.offsetHeight || window.innerHeight;
-    scrollOpacity = Math.max(0, 1 - (scrollY / (heroH * 0.75)));
-    canvas.style.opacity = scrollOpacity;
-    if (glowEl) glowEl.style.opacity = scrollOpacity * 0.85;
-
-    // No need to draw if scrolled past hero
-    if (scrollOpacity <= 0) return;
-
-    ctx.clearRect(0, 0, W, H);
-
-    particles.forEach(p => {
-      /* Float movement */
-      p.x += p.vx;
-      p.y += p.vy;
-
-      /* Twinkle: subtle alpha pulse */
-      p.twinkleAngle += p.twinkleSpeed;
-      const twinkle = 0.75 + 0.25 * Math.sin(p.twinkleAngle);
-
-      /* Mouse micro-parallax */
-      if (!mobile) {
-        const targetMX = mouseNX * MOUSE_STRENGTH * p.depth;
-        const targetMY = mouseNY * MOUSE_STRENGTH * p.depth;
-        p.mx = lerp(p.mx, targetMX, MOUSE_LERP);
-        p.my = lerp(p.my, targetMY, MOUSE_LERP);
-      }
-
-      /* Wrap around edges */
-      if (p.y < -p.r * 2) { Object.assign(p, makeParticle(false)); }
-      if (p.x < -p.r * 20) { p.x = W + p.r * 5; }
-      if (p.x > W + p.r * 20) { p.x = -p.r * 5; }
-
-      /* Draw */
-      const drawX = p.x + p.mx;
-      const drawY = p.y + p.my;
-      const alpha = p.alpha * twinkle * scrollOpacity;
-
-      // Larger particles get a soft glow halo
-      if (p.r > 1.2) {
-        const grad = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, p.r * 4);
-        grad.addColorStop(0, `rgba(${p.col},${alpha})`);
-        grad.addColorStop(0.4, `rgba(${p.col},${alpha * 0.3})`);
-        grad.addColorStop(1, `rgba(${p.col},0)`);
-        ctx.beginPath();
-        ctx.arc(drawX, drawY, p.r * 4, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-      }
-
-      // Core dot
-      ctx.beginPath();
-      ctx.arc(drawX, drawY, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${p.col},${Math.min(alpha * 1.6, BASE_OPACITY * 1.8)})`;
-      ctx.fill();
-    });
-  });
-}
-
 /* ─── SCROLL REVEAL ──────────────────────────────────────── */
 function initScrollReveal() {
   const obsOpts = { threshold: 0.12, rootMargin: '0px 0px -5% 0px' };
@@ -479,13 +289,8 @@ function initScrollReveal() {
     });
   }, obsOpts);
 
-  if (window.innerWidth > 768) {
-    $$('.fade-up, .fade-in, .reveal-text, .about-circle-wrap, .project-card').forEach(el => obs.observe(el));
-  } else {
-    $$('.fade-up, .fade-in, .reveal-text, .about-circle-wrap, .project-card').forEach(el => {
-      el.classList.add('revealed');
-    });
-  }
+  // Apply to all devices (Framer-style works smoothly on mobile too)
+  $$('.fade-up, .fade-in, .reveal-text, .about-circle-wrap, .project-card').forEach(el => obs.observe(el));
 
   // Staggered children
   $$('[data-stagger]').forEach(parent => {
@@ -966,52 +771,21 @@ function initParallax() {
 
 /* ─── SERVICE CARDS STAGGER ──────────────────────────────── */
 function initServiceCards() {
-  if (!isMobile()) return;
+  // Logic handled pure-CSS for best performance.
+}
 
-  const wrappers = $$('.services-grid .service-card-wrapper');
-  const cards = $$('.services-grid .service-card');
-  if (wrappers.length === 0) return;
-
-  // Ensure they are fully visible initially (bypass any scroll reveal delays)
-  cards.forEach(card => {
-    card.style.opacity = '1';
-    card.style.transform = 'none';
-  });
+/* ─── PARALLAX SYSTEM ────────────────────────────────────── */
+function initParallax() {
+  const elements = $$('[data-parallax]');
+  if (elements.length === 0 || isMobile()) return;
 
   rafCbs.add(() => {
-    const vh = window.innerHeight;
-
-    wrappers.forEach((wrapper, i) => {
-      const card = cards[i];
-      if (!card) return;
-
-      const rect = wrapper.getBoundingClientRect();
-      const stickyTop = 80; // Matches CSS top: 80px for all cards
-
-      // Compute progress once the wrapper passes the sticky zone
-      const y = rect.top - stickyTop;
-
-      if (y < 0) {
-        // Card is sticky and is being overlapped by subsequent cards
-        const range = rect.height || (vh * 0.5);
-        const factor = clamp(Math.abs(y) / range, 0, 1);
-
-        // Scale down, tilt back, shift upwards, fade and blur
-        const scale = 1 - factor * 0.08;
-        const rotateX = -factor * 12;
-        const translateY = -factor * 20;
-        const opacity = 1 - factor * 0.45;
-        const blur = factor * 3;
-
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) scale(${scale}) translateY(${translateY}px)`;
-        card.style.opacity = `${opacity}`;
-        card.style.filter = blur > 0.15 ? `blur(${blur}px)` : 'none';
-      } else {
-        // Normal state before sticking
-        card.style.transform = 'none';
-        card.style.opacity = '1';
-        card.style.filter = 'none';
-      }
+    elements.forEach(el => {
+      const speed = parseFloat(el.getAttribute('data-parallax')) || 0.1;
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const distFromCenter = center - window.innerHeight / 2;
+      el.style.transform = `translateY(${distFromCenter * speed}px)`;
     });
   });
 }
@@ -1307,67 +1081,6 @@ function initPageTransitions() {
   });
 }
 
-/* ─── ABOUT SECTION PARTICLES ────────────────────────────── */
-function initAboutParticles() {
-  const canvas = $('.about-particles-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const wrap = canvas.closest('.about-visual-col');
-  if (!wrap) return;
-
-  let W, H, pts = [];
-
-  function resize() {
-    const r = wrap.getBoundingClientRect();
-    W = canvas.width = r.width + 120;
-    H = canvas.height = r.height + 120;
-  }
-
-  resize();
-  window.addEventListener('resize', () => { resize(); pts = []; for (let i = 0; i < 40; i++) pts.push(mkPt()); });
-
-  function mkPt() {
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 160 + Math.random() * 120;
-    const cx = W / 2, cy = H / 2;
-    return {
-      x: cx + Math.cos(angle) * dist,
-      y: cy + Math.sin(angle) * dist,
-      r: Math.random() * 1.8 + 0.4,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      life: Math.random(),
-      speed: Math.random() * 0.003 + 0.001,
-    };
-  }
-
-  for (let i = 0; i < 40; i++) pts.push(mkPt());
-
-  // Only run when about section is visible
-  const aboutSec = $('#about');
-  let active = false;
-  if (aboutSec) {
-    const io = new IntersectionObserver(e => { active = e[0].isIntersecting; }, { threshold: 0.1 });
-    io.observe(aboutSec);
-  }
-
-  rafCbs.add(() => {
-    if (!active) return;
-    ctx.clearRect(0, 0, W, H);
-    pts.forEach((p, i) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= p.speed;
-      if (p.life <= 0) pts[i] = mkPt();
-
-      const alpha = Math.min(p.life / 0.4, 1) * 0.6;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,122,0,${alpha})`;
-      ctx.fill();
-    });
-  });
-}
 
 /* ─── SMOOTH SCROLL TO HELPER ───────────────────────────── */
 function smoothScrollTo(targetEl, duration = 1000) {
@@ -1549,6 +1262,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initParallax();
   initServiceCards();
   initAmbientBg();
-  initAboutParticles();
   initHireMeModalAndScroll();
 });
