@@ -426,15 +426,13 @@ body.cursor-hover #cursor-label {
   display: block;
   transform: translateY(40px) scale(0.98);
   opacity: 0;
-  filter: blur(4px);
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
 }
 
 .reveal-text.revealed .line-inner {
   transform: translateY(0) scale(1);
   opacity: 1;
-  filter: blur(0);
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-text.revealed .line:nth-child(2) .line-inner { transition-delay: 0.1s; }
@@ -443,27 +441,50 @@ body.cursor-hover #cursor-label {
 
 .fade-up {
   opacity: 0;
-  filter: blur(4px);
   transform: translateY(40px) scale(0.98);
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
 }
 
 .fade-up.revealed {
   opacity: 1;
-  filter: blur(0);
   transform: translateY(0) scale(1);
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-in {
   opacity: 0;
-  filter: blur(2px);
-  will-change: opacity, filter;
+  will-change: opacity;
 }
 
 .fade-in.revealed {
   opacity: 1;
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Service & Capabilities Area Blur Effects */
+#services .reveal-text .line-inner,
+#services .fade-up {
+  filter: blur(4px);
+  will-change: transform, opacity, filter;
+}
+
+#services .fade-in {
+  filter: blur(2px);
+  will-change: opacity, filter;
+}
+
+#services .reveal-text.revealed .line-inner,
+#services .fade-up.revealed,
+#services .fade-in.revealed {
   filter: blur(0);
+}
+
+#services .reveal-text.revealed .line-inner,
+#services .fade-up.revealed {
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#services .fade-in.revealed {
   transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -2568,54 +2589,84 @@ body.cursor-hover #cursor-label {
   background: radial-gradient(circle at 50% 90%, rgba(255, 122, 0, 0.2) 0%, transparent 55%);
 }
 
-.cv-screen-wide {
+.cv-li-img {
   position: absolute;
-  width: 82%;
-  height: 58%;
-  top: 14%;
-  left: 9%;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #101418 0%, #0c0e12 100%);
-  border: 1px solid rgba(255, 122, 0, 0.25);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 122, 0, 0.1);
-  overflow: hidden;
-  z-index: 3;
-  transform: rotate(-1deg);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.cv-screen-wide::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45%;
-  background: linear-gradient(90deg, rgba(255, 122, 0, 0.18) 0%, rgba(0, 119, 255, 0.08) 100%);
-}
-
-.cv-screen-wide::after {
-  content: '';
-  position: absolute;
-  bottom: 15%;
+.cv-li-img-1 {
+  width: 60%;
+  height: 50%;
+  top: 15%;
   left: 10%;
-  width: 40%;
-  height: 3px;
-  background: rgba(255, 122, 0, 0.5);
-  box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
-  border-radius: 2px;
+  transform: rotate(-2deg);
+  z-index: 2;
+  border: 1px solid rgba(255, 122, 0, 0.3);
 }
 
-.cv-profile-dots {
+.cv-li-img-2 {
+  width: 45%;
+  height: 55%;
+  top: 30%;
+  right: 10%;
+  transform: rotate(3deg);
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cv-li-profile {
   position: absolute;
-  bottom: 14%;
+  bottom: 12%;
   left: 18%;
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 122, 0, 0.6), rgba(255, 122, 0, 0.2));
-  box-shadow: 0 0 20px rgba(255, 122, 0, 0.4);
+  object-fit: cover;
+  border: 2px solid #ff7a00;
+  box-shadow: 0 0 20px rgba(255, 122, 0, 0.5);
   z-index: 4;
-  border: 2px solid rgba(255, 122, 0, 0.5);
+  transition: transform 0.4s ease;
+}
+
+.cv-li-icon {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  z-index: 5;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+  transition: transform 0.4s ease;
+}
+
+.cv-li-icon-1 {
+  top: 18%;
+  right: 20%;
+  transform: rotate(15deg);
+}
+
+.cv-li-icon-2 {
+  bottom: 25%;
+  right: 35%;
+  transform: rotate(-10deg);
+}
+
+/* Hover effects */
+.project-card:hover .cv-li-img-1 {
+  transform: rotate(0deg) scale(1.05) translateY(-5px);
+  z-index: 5;
+}
+.project-card:hover .cv-li-img-2 {
+  transform: rotate(0deg) scale(1.05) translateY(-5px);
+  z-index: 6;
+}
+.project-card:hover .cv-li-profile {
+  transform: scale(1.15) rotate(5deg);
+}
+.project-card:hover .cv-li-icon {
+  transform: translateY(-8px) scale(1.1);
 }
 
 /* ── Flyer ── */
@@ -3297,5 +3348,41 @@ body.cursor-hover #cursor-label {
   .modal-footer {
     margin-top: 24px !important;
     padding-top: 16px !important;
+  }
+}
+
+/* ─── FLOATING SWIZZZ KEYS SINGLE IMAGE ───────────────────── */
+.hero-floating-keys {
+  position: absolute;
+  top: 40%;
+  right: 5%;
+  left: auto;
+  transform: translateY(-50%);
+  width: 300px;
+  max-width: 40vw;
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.hero-floating-keys img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  animation: floatSingleKeyGroup 6s ease-in-out infinite alternate;
+}
+
+@keyframes floatSingleKeyGroup {
+  0% { transform: translateY(-10px) rotate(-2deg) scale(0.98); }
+  100% { transform: translateY(10px) rotate(2deg) scale(1.02); }
+}
+
+@media (max-width: 768px) {
+  .hero-floating-keys {
+    width: 200px;
+    top: 20%;
+    right: 5%;
+    opacity: 0.6;
   }
 }

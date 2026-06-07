@@ -544,6 +544,10 @@ function initProjectOverlay() {
         triggerPageTransition('youtube-thumbnails.html');
         return;
       }
+      if (titleText === 'LinkedIn Cover Design') {
+        triggerPageTransition('linkedin-covers.html');
+        return;
+      }
 
       const rect = card.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;

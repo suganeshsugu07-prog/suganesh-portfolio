@@ -358,6 +358,21 @@
   }
 }
 
+@media (max-width: 600px) {
+  .case-study-metrics {
+    gap: 16px;
+  }
+  .metric-card {
+    padding: 20px 12px;
+  }
+  .metric-num {
+    font-size: 2.2rem;
+  }
+  .metric-lbl {
+    font-size: 9px;
+  }
+}
+
 /* ─── FULLSCREEN LIGHTBOX PREVIEW ──────────────────────── */
 .lightbox-modal {
   position: fixed;
