@@ -2858,6 +2858,8 @@ body.cursor-hover #cursor-label {
     -webkit-overflow-scrolling: touch !important;
     padding: 20px 0 40px !important;
     scrollbar-width: none !important; /* Hide scrollbar */
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
   }
   
   .carousel-outer::-webkit-scrollbar {

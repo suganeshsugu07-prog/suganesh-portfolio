@@ -702,7 +702,7 @@
               const outer = document.querySelector(".carousel-outer");
               const track = document.querySelector(".carousel-track");
 
-              // const isMobile = () => window.innerWidth <= 768;
+              const isCarouselMobile = () => window.innerWidth <= 768;
 
               let isDown = false;
               let isScrollingActive = true;
@@ -728,13 +728,13 @@
               window.addEventListener("orientationchange", () => setTimeout(updateWrapOffset, 200));
 
               // Auto marquee
-              let autoSpeed = 1;
+              let autoSpeed = 1.5;
 
               function autoScroll() {
-                if (isMobile()) {
+                if (isCarouselMobile()) {
                   // Mobile Javascript scroll
                   if (isScrollingActive && !isDown) {
-                    outer.scrollLeft += 1;
+                    outer.scrollLeft += 2;
                     if (wrapOffset > 0 && outer.scrollLeft >= wrapOffset) {
                       outer.scrollLeft -= wrapOffset;
                     }
@@ -759,7 +759,7 @@
               // Seamless Scroll Wrap-Around & Resume logic on Mobile
               let isWrapping = false;
               outer.addEventListener("scroll", () => {
-                if (!isMobile()) return;
+                if (!isCarouselMobile()) return;
                 if (isWrapping || wrapOffset <= 0) return;
 
                 // Seamless Infinite Loop checks (both directions)
