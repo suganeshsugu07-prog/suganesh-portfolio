@@ -734,7 +734,7 @@
                 if (isCarouselMobile()) {
                   // Mobile Javascript scroll
                   if (isScrollingActive && !isDown) {
-                    outer.scrollLeft += 2;
+                    outer.scrollLeft += 5; // Increased speed for mobile
                     if (wrapOffset > 0 && outer.scrollLeft >= wrapOffset) {
                       outer.scrollLeft -= wrapOffset;
                     }

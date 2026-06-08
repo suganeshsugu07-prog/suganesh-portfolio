@@ -54,6 +54,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
 #hologram-canvas {
   position: fixed;
   inset: 0;
@@ -408,6 +410,8 @@ body.cursor-hover #cursor-label {
 .container {
   width: var(--container);
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .section {
@@ -944,11 +948,22 @@ body.cursor-hover #cursor-label {
 
 @keyframes marquee-scroll {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media(max-width: 768px) {
+  .marquee-track {
+    animation: marquee-scroll 4s linear infinite !important;
+  }
+  
+  .marquee-track:hover,
+  .marquee-track:active {
+    animation-play-state: running !important;
   }
 }
 
@@ -1278,6 +1293,24 @@ body.cursor-hover #cursor-label {
   padding: var(--section-pad) 0;
   background: linear-gradient(180deg, var(--bg) 0%, #0A0A0A 50%, var(--bg) 100%);
   overflow: hidden;
+  position: relative;
+}
+
+/* Section Background Grids */
+#hero::before,
+#about::before,
+#skills::before,
+#contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: 
+    repeating-linear-gradient(to right, transparent, transparent 39px, rgba(255, 255, 255, 0.08) 39px, rgba(255, 255, 255, 0.08) 40px),
+    repeating-linear-gradient(to bottom, transparent, transparent 39px, rgba(255, 255, 255, 0.08) 39px, rgba(255, 255, 255, 0.08) 40px);
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
 }
 
 .about-grid {
@@ -1285,6 +1318,8 @@ body.cursor-hover #cursor-label {
   grid-template-columns: 1fr 1fr;
   gap: clamp(60px, 8vw, 120px);
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Left visual column ── */
@@ -2353,14 +2388,20 @@ body.cursor-hover #cursor-label {
 
 }
 
+/* Force hardware acceleration on cards to make JS scrolling perfectly smooth */
+.project-card {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
 @keyframes carousel-scroll {
 
   0%{
-    transform:translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 
   100%{
-    transform:translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 
 }
