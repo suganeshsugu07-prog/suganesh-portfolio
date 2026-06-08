@@ -942,7 +942,7 @@ function initHologramBackground() {
 
     /* Section intensity */
     const sectionMult = getSectionMultiplier();
-    const baseOpacity = (mobile ? 0.55 : 1.0) * sectionMult;
+    const baseOpacity = (mobile ? 0.25 : 0.45) * sectionMult;
 
     /* ── Clear canvas with pure black ── */
     ctx.clearRect(0, 0, W, H);

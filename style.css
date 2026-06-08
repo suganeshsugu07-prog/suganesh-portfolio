@@ -89,40 +89,9 @@ ul {
 }
 
 /* ─── PREMIUM RADIAL GLOW ────────────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  top: 35%; /* Behind hero content */
-  left: 50%;
-  width: 150vw;
-  height: 150vh;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle at center, rgba(255, 122, 0, 0.18) 0%, rgba(255, 122, 0, 0.04) 30%, transparent 60%);
-  pointer-events: none;
-  z-index: -6;
-  animation: pulseGlow 12s ease-in-out infinite alternate;
-}
 
-@keyframes pulseGlow {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-}
 
-/* ─── STATIC GRID BACKGROUND ───────────────────────────── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -5;
-  pointer-events: none;
-  background-size: 60px 60px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-  /* Depth effect: sharp in center, fading to edges */
-  mask-image: radial-gradient(circle at 50% 35%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at 50% 35%, black 20%, transparent 80%);
-}
+/* ─── STATIC GRID BACKGROUND REMOVED ───────────────────────────── */
 
 /* ─── CUSTOM CURSOR ──────────────────────────────────────── */
 #cursor-dot {
@@ -915,9 +884,10 @@ body.cursor-hover #cursor-label {
 
 .marquee-track {
   display: flex;
-  gap: 0;
+  gap: 24px;
   white-space: nowrap;
-  animation: marquee-scroll 25s linear infinite;
+  width: max-content;
+  animation: marquee-scroll 35s linear infinite;
 }
 
 .marquee-track:hover {
@@ -928,7 +898,7 @@ body.cursor-hover #cursor-label {
   display: inline-flex;
   align-items: center;
   gap: 24px;
-  padding: 0 24px;
+  padding: 0;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.25em;
@@ -958,7 +928,7 @@ body.cursor-hover #cursor-label {
 
 @media(max-width: 768px) {
   .marquee-track {
-    animation: marquee-scroll 4s linear infinite !important;
+    animation: marquee-scroll 18s linear infinite !important;
   }
   
   .marquee-track:hover,
@@ -2377,13 +2347,12 @@ body.cursor-hover #cursor-label {
 @media(max-width:768px){
 
   .carousel-track{
-    animation:none !important;
+    animation: carousel-scroll 15s linear infinite !important;
   }
 
   .carousel-outer{
-    overflow-x:auto;
-    cursor:grab;
-    -webkit-overflow-scrolling:touch;
+    overflow-x: hidden !important;
+    cursor: grab;
   }
 
 }
@@ -2892,11 +2861,9 @@ body.cursor-hover #cursor-label {
   .service-card-wrapper:nth-child(6) .service-card { z-index: 6; top: 190px !important; }
 
 
-  /* Mobile Snap Carousel for Projects */
+  /* Mobile Fast Carousel for Projects */
   .carousel-outer {
-    overflow-x: auto !important;
-    scroll-snap-type: none !important; /* Disable snapping to allow smooth scrolling marquee */
-    -webkit-overflow-scrolling: touch !important;
+    overflow-x: hidden !important;
     padding: 20px 0 40px !important;
     scrollbar-width: none !important; /* Hide scrollbar */
     mask-image: none !important;
@@ -2911,8 +2878,7 @@ body.cursor-hover #cursor-label {
     display: flex !important;
     gap: 32px !important;
     width: max-content !important;
-    animation: none !important; /* Disable CSS scroll animation on mobile so JS controls it smoothly */
-    transform: none !important;
+    animation: carousel-scroll 15s linear infinite !important;
   }
 
   /* Keep duplicate loop cards visible for seamless infinite loop on mobile */
@@ -2924,6 +2890,11 @@ body.cursor-hover #cursor-label {
     scroll-snap-align: none !important; /* Disable snap alignment */
     width: 80vw !important;
     margin-right: 0 !important; /* Rely on gap from parent track for layout */
+  }
+
+  .project-card-img {
+    height: auto !important;
+    aspect-ratio: 16 / 9;
   }
 
   /* General mobile animations visibility reset */
