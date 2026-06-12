@@ -993,6 +993,15 @@ body.cursor-hover #cursor-label {
   text-align: right;
 }
 
+@media (max-width: 768px) {
+  .section-meta {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    text-align: center;
+    max-width: 100%;
+  }
+}
+
 /* Horizontal scroll gallery */
 .h-scroll-wrapper {
   position: relative;
@@ -1573,6 +1582,22 @@ body.cursor-hover #cursor-label {
   margin-top: 8px;
 }
 
+/* ─── BODY TEXT ──────────────────────────────────────────── */
+.body-text {
+  color: var(--gray);
+  line-height: 1.55;
+  font-size: 0.95rem;
+  transition-delay: 0.2s;
+}
+
+@media (max-width: 768px) {
+  .body-text {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    text-align: center;
+  }
+}
+
 /* ─── SERVICES SECTION ───────────────────────────────────── */
 #services {
   padding: var(--section-pad) 0;
@@ -1656,6 +1681,18 @@ body.cursor-hover #cursor-label {
   font-size: 0.875rem;
   line-height: 1.75;
   color: var(--gray);
+}
+
+@media (max-width: 768px) {
+  .service-desc {
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .service-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
 }
 
 .service-card-num {
@@ -3429,7 +3466,7 @@ body.cursor-hover #cursor-label {
   width: 100%;
   height: auto;
   object-fit: contain;
-  animation: floatSingleKeyGroup 6s ease-in-out infinite alternate;
+  animation: floatSingleKeyGroup 2.5s ease-in-out infinite alternate;
 }
 
 @keyframes floatSingleKeyGroup {
