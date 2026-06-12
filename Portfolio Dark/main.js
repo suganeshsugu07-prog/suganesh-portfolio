@@ -16,6 +16,8 @@ const isMobile = () => window.innerWidth <= 768;
 /* ─── RAF LOOP ──────────────────────────────────────────── */
 let rafId;
 const rafCbs = new Set();
+let isAutoScrolling = false;
+let updateSmoothScrollTargets = null;
 
 function startRAF() {
   function loop() {
@@ -27,12 +29,12 @@ function startRAF() {
 
 /* ─── PRELOADER ─────────────────────────────────────────── */
 function initPreloader() {
-  const loader      = $('#preloader');
-  const barFill     = loader.querySelector('.pre-bar-fill');
-  const counter     = loader.querySelector('.pre-counter');
-  const panels      = loader.querySelectorAll('.pre-panel');
-  const logoSpans   = loader.querySelectorAll('.pre-logo .word span');
-  const tagline     = loader.querySelector('.pre-tagline');
+  const loader = $('#preloader');
+  const barFill = loader.querySelector('.pre-bar-fill');
+  const counter = loader.querySelector('.pre-counter');
+  const panels = loader.querySelectorAll('.pre-panel');
+  const logoSpans = loader.querySelectorAll('.pre-logo .word span');
+  const tagline = loader.querySelector('.pre-tagline');
 
   let progress = 0;
   const target = { v: 0 };
@@ -93,9 +95,9 @@ function initPreloader() {
 function initCursor() {
   if (isMobile()) return;
 
-  const dot    = $('#cursor-dot');
-  const ring   = $('#cursor-ring');
-  const label  = $('#cursor-label');
+  const dot = $('#cursor-dot');
+  const ring = $('#cursor-ring');
+  const label = $('#cursor-label');
 
   let mx = 0, my = 0;
   let rx = 0, ry = 0;
@@ -105,16 +107,16 @@ function initCursor() {
     my = e.clientY;
 
     dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
+    dot.style.top = my + 'px';
     label.style.left = mx + 'px';
-    label.style.top  = my + 'px';
+    label.style.top = my + 'px';
   });
 
   rafCbs.add(() => {
     rx = lerp(rx, mx, 0.1);
     ry = lerp(ry, my, 0.1);
     ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
+    ring.style.top = ry + 'px';
   });
 
   // Hover states
@@ -153,28 +155,36 @@ function initSmoothScroll() {
   if (isMobile()) return; // native scroll on mobile
 
   let currentY = 0;
-  let targetY  = 0;
-  const ease   = 0.085;
+  let targetY = 0;
+  const ease = 0.085;
+
+  updateSmoothScrollTargets = (val) => {
+    targetY = val;
+    currentY = val;
+  };
 
   const wrapper = document.querySelector('main') || document.body;
 
   window.addEventListener('wheel', e => {
+    if (isAutoScrolling) return;
     e.preventDefault();
     targetY = clamp(targetY + e.deltaY, 0, document.documentElement.scrollHeight - window.innerHeight);
   }, { passive: false });
 
   window.addEventListener('keydown', e => {
+    if (isAutoScrolling) return;
     const step = 120;
     if (e.key === 'ArrowDown') targetY += step;
-    if (e.key === 'ArrowUp')   targetY -= step;
-    if (e.key === 'PageDown')  targetY += window.innerHeight;
-    if (e.key === 'PageUp')    targetY -= window.innerHeight;
-    if (e.key === 'Home')      targetY = 0;
-    if (e.key === 'End')       targetY = document.documentElement.scrollHeight;
+    if (e.key === 'ArrowUp') targetY -= step;
+    if (e.key === 'PageDown') targetY += window.innerHeight;
+    if (e.key === 'PageUp') targetY -= window.innerHeight;
+    if (e.key === 'Home') targetY = 0;
+    if (e.key === 'End') targetY = document.documentElement.scrollHeight;
     targetY = clamp(targetY, 0, document.documentElement.scrollHeight - window.innerHeight);
   });
 
   rafCbs.add(() => {
+    if (isAutoScrolling) return;
     currentY = lerp(currentY, targetY, ease);
     const rounded = Math.round(currentY * 100) / 100;
     window.scrollTo(0, rounded);
@@ -236,76 +246,24 @@ function initHero() {
     if (hint) Object.assign(hint.style, { transition: 'opacity 1s', opacity: '1' });
   }, 1200);
 
-  // Init particles
-  initHeroParticles();
-
   // Mouse parallax hero
   initHeroParallax();
-}
-
-/* ─── HERO PARTICLES ─────────────────────────────────────── */
-function initHeroParticles() {
-  const canvas = $('#hero-particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  let W, H, particles = [];
-
-  function resize() {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-
-  resize();
-  window.addEventListener('resize', resize);
-
-  function randomParticle() {
-    return {
-      x:    Math.random() * W,
-      y:    Math.random() * H,
-      r:    Math.random() * 2 + 0.5,
-      vx:   (Math.random() - 0.5) * 0.3,
-      vy:   -Math.random() * 0.5 - 0.1,
-      life: Math.random(),
-      maxLife: Math.random() * 0.6 + 0.4,
-    };
-  }
-
-  for (let i = 0; i < 120; i++) particles.push(randomParticle());
-
-  rafCbs.add(() => {
-    ctx.clearRect(0, 0, W, H);
-
-    particles.forEach((p, i) => {
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.life -= 0.004;
-
-      if (p.life <= 0) particles[i] = randomParticle();
-
-      const alpha = Math.min(p.life / 0.3, 1) * 0.7;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,122,0,${alpha})`;
-      ctx.fill();
-    });
-  });
 }
 
 /* ─── HERO MOUSE PARALLAX ────────────────────────────────── */
 function initHeroParallax() {
   if (isMobile()) return;
 
-  const hero    = $('#hero');
+  const hero = $('#hero');
   const heading = $('.hero-heading');
-  const bgImgs  = $('.hero-bg-images');
+  const bgImgs = $('.hero-bg-images');
 
   let tx = 0, ty = 0;
   let cx = 0, cy = 0;
 
   hero.addEventListener('mousemove', e => {
     const rect = hero.getBoundingClientRect();
-    tx = (e.clientX / rect.width  - 0.5) * 30;
+    tx = (e.clientX / rect.width - 0.5) * 30;
     ty = (e.clientY / rect.height - 0.5) * 20;
   });
 
@@ -331,6 +289,7 @@ function initScrollReveal() {
     });
   }, obsOpts);
 
+  // Apply to all devices (Framer-style works smoothly on mobile too)
   $$('.fade-up, .fade-in, .reveal-text, .about-circle-wrap, .project-card').forEach(el => obs.observe(el));
 
   // Staggered children
@@ -391,8 +350,8 @@ function animateCounter(el) {
   const target = parseInt(el.dataset.count, 10);
   const suffix = el.dataset.suffix || '';
   const prefix = el.dataset.prefix || '';
-  const dur    = 1800;
-  const start  = performance.now();
+  const dur = 1800;
+  const start = performance.now();
 
   function tick(now) {
     const elapsed = now - start;
@@ -409,15 +368,15 @@ function animateCounter(el) {
 /* ─── HORIZONTAL SCROLL GALLERY ─────────────────────────── */
 function initHorizontalScroll() {
   const wrapper = $('.h-scroll-wrapper');
-  const track   = $('.h-scroll-track');
+  const track = $('.h-scroll-track');
   if (!wrapper || !track) return;
 
   let isDown = false;
-  let startX  = 0;
+  let startX = 0;
   let scrollLeft = 0;
-  let velocity   = 0;
-  let lastX      = 0;
-  let momentum   = false;
+  let velocity = 0;
+  let lastX = 0;
+  let momentum = false;
 
   // Drag scroll
   wrapper.addEventListener('mousedown', e => {
@@ -471,7 +430,7 @@ function initHorizontalScroll() {
       const containerRect = wrapper.getBoundingClientRect();
       $$('.project-card', wrapper).forEach(card => {
         const rect = card.getBoundingClientRect();
-        const rel  = (rect.left - containerRect.left) / containerRect.width;
+        const rel = (rect.left - containerRect.left) / containerRect.width;
         const tilt = mapRange(rel, 0, 1, -8, 8);
         card.style.transform = card.matches(':hover') ? '' : `perspective(1200px) rotateY(${tilt * 0.3}deg)`;
       });
@@ -495,10 +454,10 @@ function initCardTilt() {
   $$('.project-card').forEach(card => {
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
-      const cx   = rect.left + rect.width  / 2;
-      const cy   = rect.top  + rect.height / 2;
-      const rx   = (e.clientY - cy) / (rect.height / 2) * -10;
-      const ry   = (e.clientX - cx) / (rect.width  / 2) *  10;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const rx = (e.clientY - cy) / (rect.height / 2) * -10;
+      const ry = (e.clientX - cx) / (rect.width / 2) * 10;
 
       card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-12px) scale(1.02)`;
     });
@@ -512,88 +471,92 @@ function initCardTilt() {
 /* ─── PROJECT OVERLAY ────────────────────────────────────── */
 const projects = [
   {
-    title:  'SOCIAL MEDIA POSTER DESIGN',
-    tags:   ['Social Media', 'Ad Creative', 'Marketing Design'],
-    year:   '2024',
+    title: 'SOCIAL MEDIA POSTER DESIGN',
+    tags: ['Social Media', 'Ad Creative', 'Marketing Design'],
+    year: '2024',
     client: 'Multiple Clients',
-    role:   'Graphic Designer',
+    role: 'Graphic Designer',
     imgClass: 'project-card-img--social',
-    desc:   'Scroll-stopping social media poster designs crafted for Instagram, Facebook, and digital ad platforms. Bold visuals, cinematic color-grading and typography systems built to maximize engagement and brand recall.',
+    desc: 'Scroll-stopping social media poster designs crafted for Instagram, Facebook, and digital ad platforms. Bold visuals, cinematic color-grading and typography systems built to maximize engagement and brand recall.',
   },
   {
-    title:  'YOUTUBE THUMBNAIL DESIGN',
-    tags:   ['YouTube', 'Thumbnail', 'CTR Design'],
-    year:   '2024',
+    title: 'YOUTUBE THUMBNAIL DESIGN',
+    tags: ['YouTube', 'Thumbnail', 'CTR Design'],
+    year: '2024',
     client: 'Content Creators',
-    role:   'Thumbnail Designer',
+    role: 'Thumbnail Designer',
     imgClass: 'project-card-img--yt',
-    desc:   'High-CTR YouTube thumbnail designs that blend striking title typography, color-graded visuals, and focused composition to dramatically boost click-through rates and channel growth.',
+    desc: 'High-CTR YouTube thumbnail designs that blend striking title typography, color-graded visuals, and focused composition to dramatically boost click-through rates and channel growth.',
   },
   {
-    title:  'PACKAGING DESIGN',
-    tags:   ['Packaging', 'Branding', 'Product Design'],
-    year:   '2024',
+    title: 'PACKAGING DESIGN',
+    tags: ['Packaging', 'Branding', 'Product Design'],
+    year: '2024',
     client: 'Product Brands',
-    role:   'Packaging Designer',
+    role: 'Packaging Designer',
     imgClass: 'project-card-img--packaging',
-    desc:   'Custom premium product labels, structural box wraps, and packaging systems that command shelf presence. Dark luxury aesthetics with cinematic orange accents for an unforgettable unboxing experience.',
+    desc: 'Custom premium product labels, structural box wraps, and packaging systems that command shelf presence. Dark luxury aesthetics with cinematic orange accents for an unforgettable unboxing experience.',
   },
   {
-    title:  'LINKEDIN COVER DESIGN',
-    tags:   ['LinkedIn', 'Personal Branding', 'Banner Design'],
-    year:   '2024',
+    title: 'LINKEDIN COVER DESIGN',
+    tags: ['LinkedIn', 'Personal Branding', 'Banner Design'],
+    year: '2024',
     client: 'Professionals & Brands',
-    role:   'Brand Designer',
+    role: 'Brand Designer',
     imgClass: 'project-card-img--linkedin',
-    desc:   'Professional LinkedIn profile banners and company page covers designed to communicate authority, expertise, and brand identity at a glance. Clean, premium layouts that convert profile views to connections.',
+    desc: 'Professional LinkedIn profile banners and company page covers designed to communicate authority, expertise, and brand identity at a glance. Clean, premium layouts that convert profile views to connections.',
   },
   {
-    title:  'FLYER DESIGN',
-    tags:   ['Print Design', 'Promotional', 'Marketing'],
-    year:   '2024',
+    title: 'FLYER DESIGN',
+    tags: ['Print Design', 'Promotional', 'Marketing'],
+    year: '2024',
     client: 'Events & Businesses',
-    role:   'Graphic Designer',
+    role: 'Graphic Designer',
     imgClass: 'project-card-img--flyer',
-    desc:   'Impactful print and digital flyer designs for events, promotions, and business announcements. Dramatic orange lighting, bold hierarchy, and premium composition that demands attention.',
+    desc: 'Impactful print and digital flyer designs for events, promotions, and business announcements. Dramatic orange lighting, bold hierarchy, and premium composition that demands attention.',
   },
   {
-    title:  'UI/UX DESIGN',
-    tags:   ['UI Design', 'UX Experience', 'Web Interface'],
-    year:   '2024',
+    title: 'UI/UX DESIGN',
+    tags: ['UI Design', 'UX Experience', 'Web Interface'],
+    year: '2024',
     client: 'Tech Startups',
-    role:   'UI/UX Designer',
+    role: 'UI/UX Designer',
     imgClass: 'project-card-img--uiux',
-    desc:   'User-centered dark-themed responsive web and app interfaces that prioritize sleek layouts, intuitive navigation, and premium visual language. Smooth micro-interactions and futuristic design systems.',
+    desc: 'User-centered dark-themed responsive web and app interfaces that prioritize sleek layouts, intuitive navigation, and premium visual language. Smooth micro-interactions and futuristic design systems.',
   },
 ];
 
 function initProjectOverlay() {
-  const overlay     = $('#project-overlay');
-  const lens        = overlay.querySelector('.overlay-lens');
-  const content     = overlay.querySelector('.overlay-content');
-  const closeBtn    = overlay.querySelector('.overlay-close-btn');
+  const overlay = $('#project-overlay');
+  const lens = overlay.querySelector('.overlay-lens');
+  const content = overlay.querySelector('.overlay-content');
+  const closeBtn = overlay.querySelector('.overlay-close-btn');
 
   $$('.project-card').forEach((card, i) => {
     card.addEventListener('click', e => {
       const titleText = card.querySelector('.project-card-title')?.textContent.trim();
-      
+
       if (titleText === 'Social Media Poster Design') {
-        window.location.href = 'social-media-posters.html';
+        triggerPageTransition('social-media-posters.html');
         return;
       }
       if (titleText === 'YouTube Thumbnail Design') {
-        window.location.href = 'youtube-thumbnails.html';
+        triggerPageTransition('youtube-thumbnails.html');
+        return;
+      }
+      if (titleText === 'LinkedIn Cover Design') {
+        triggerPageTransition('linkedin-covers.html');
         return;
       }
 
       const rect = card.getBoundingClientRect();
-      const cx = rect.left + rect.width  / 2;
-      const cy = rect.top  + rect.height / 2;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
 
       // Position lens at card center
       Object.assign(lens.style, {
-        width:  '10px', height: '10px',
-        left:   cx + 'px', top: cy + 'px',
+        width: '10px', height: '10px',
+        left: cx + 'px', top: cy + 'px',
         transform: 'translate(-50%, -50%) scale(0)',
         transition: 'none',
       });
@@ -603,7 +566,7 @@ function initProjectOverlay() {
 
       setTimeout(() => {
         lens.style.transition = 'transform 0.9s cubic-bezier(0.16,1,0.3,1), border-radius 0.9s cubic-bezier(0.16,1,0.3,1)';
-        lens.style.transform  = 'translate(-50%, -50%) scale(30)';
+        lens.style.transform = 'translate(-50%, -50%) scale(30)';
         lens.style.borderRadius = '0';
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
@@ -649,7 +612,7 @@ function initProjectOverlay() {
   function closeOverlay() {
     overlay.classList.remove('open');
     lens.style.transition = 'transform 0.7s cubic-bezier(0.76,0,0.24,1), border-radius 0.5s 0.2s';
-    lens.style.transform  = 'translate(-50%, -50%) scale(0)';
+    lens.style.transform = 'translate(-50%, -50%) scale(0)';
     lens.style.borderRadius = '50%';
     document.body.style.overflow = '';
   }
@@ -661,7 +624,7 @@ function initOrbit() {
   if (!system) return;
 
   const planets = $$('.orbit-planet', system);
-  const rings   = [
+  const rings = [
     { r: 100, speed: 0.012 },
     { r: 165, speed: 0.008 },
     { r: 230, speed: 0.005 },
@@ -680,14 +643,14 @@ function initOrbit() {
   rafCbs.add(() => {
     planetData.forEach(p => {
       p.angle += p.speed;
-      const size   = system.offsetWidth;
-      const cx     = size / 2;
-      const cy     = size / 2;
-      const scale  = size / 500;
+      const size = system.offsetWidth;
+      const cx = size / 2;
+      const cy = size / 2;
+      const scale = size / 500;
       const x = cx + Math.cos(p.angle) * p.r * scale - 26;
       const y = cy + Math.sin(p.angle) * p.r * scale - 26;
       p.el.style.left = x + 'px';
-      p.el.style.top  = y + 'px';
+      p.el.style.top = y + 'px';
       p.el.style.position = 'absolute';
     });
   });
@@ -696,7 +659,7 @@ function initOrbit() {
 /* ─── TESTIMONIALS CAROUSEL ──────────────────────────────── */
 function initTestimonials() {
   const cards = $$('.testimonial-card');
-  const dots  = $$('.t-dot');
+  const dots = $$('.t-dot');
   const prevBtn = $('#t-prev');
   const nextBtn = $('#t-next');
   if (!cards.length) return;
@@ -739,8 +702,8 @@ function initMagnetic() {
   $$('.btn-primary, .btn-secondary, .nav-cta, .social-link').forEach(el => {
     el.addEventListener('mousemove', e => {
       const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width  / 2;
-      const cy = rect.top  + rect.height / 2;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
       const dx = (e.clientX - cx) * 0.35;
       const dy = (e.clientY - cy) * 0.35;
       el.style.transform = `translate(${dx}px, ${dy}px)`;
@@ -801,10 +764,10 @@ function initParallax() {
   rafCbs.add(() => {
     const scrollY = window.scrollY;
     parallaxEls.forEach(el => {
-      const speed  = parseFloat(el.dataset.parallax) || 0.3;
-      const rect   = el.getBoundingClientRect();
+      const speed = parseFloat(el.dataset.parallax) || 0.3;
+      const rect = el.getBoundingClientRect();
       const center = rect.top + rect.height / 2;
-      const rel    = (window.innerHeight / 2 - center);
+      const rel = (window.innerHeight / 2 - center);
       el.style.transform = `translateY(${rel * speed}px)`;
     });
   });
@@ -812,27 +775,22 @@ function initParallax() {
 
 /* ─── SERVICE CARDS STAGGER ──────────────────────────────── */
 function initServiceCards() {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        $$('.service-card').forEach((card, i) => {
-          setTimeout(() => {
-            card.style.transition = `opacity 0.7s, transform 0.9s cubic-bezier(0.16,1,0.3,1)`;
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, i * 80);
-        });
-        obs.unobserve(entry.target);
-      }
+  // Logic handled pure-CSS for best performance.
+}
+
+/* ─── PARALLAX SYSTEM ────────────────────────────────────── */
+function initParallax() {
+  const elements = $$('[data-parallax]');
+  if (elements.length === 0 || isMobile()) return;
+
+  rafCbs.add(() => {
+    elements.forEach(el => {
+      const speed = parseFloat(el.getAttribute('data-parallax')) || 0.1;
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const distFromCenter = center - window.innerHeight / 2;
+      el.style.transform = `translateY(${distFromCenter * speed}px)`;
     });
-  }, { threshold: 0.2 });
-
-  const servicesSection = $('#services');
-  if (servicesSection) obs.observe(servicesSection);
-
-  $$('.service-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(40px)';
   });
 }
 
@@ -847,466 +805,486 @@ function initAmbientBg() {
     const orb = document.createElement('div');
     orb.className = 'ambient-orb';
     const side = Math.random() > 0.5 ? 'left' : 'right';
-    const top  = 20 + Math.random() * 60;
+    const top = 20 + Math.random() * 60;
     Object.assign(orb.style, {
-      width:      '400px',
-      height:     '400px',
+      width: '400px',
+      height: '400px',
       background: 'radial-gradient(circle, rgba(255,122,0,0.2) 0%, transparent 70%)',
-      [side]:     '-150px',
-      top:        top + '%',
-      transform:  'translateY(-50%)',
+      [side]: '-150px',
+      top: top + '%',
+      transform: 'translateY(-50%)',
     });
     sec.appendChild(orb);
   });
 }
 
-/* ─── ABOUT SECTION PARTICLES ────────────────────────────── */
-function initAboutParticles() {
-  const canvas = $('.about-particles-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const wrap = canvas.closest('.about-visual-col');
-  if (!wrap) return;
-
-  let W, H, pts = [];
-
-  function resize() {
-    const r = wrap.getBoundingClientRect();
-    W = canvas.width  = r.width  + 120;
-    H = canvas.height = r.height + 120;
-  }
-
-  resize();
-  window.addEventListener('resize', () => { resize(); pts = []; for (let i = 0; i < 40; i++) pts.push(mkPt()); });
-
-  function mkPt() {
-    const angle = Math.random() * Math.PI * 2;
-    const dist  = 160 + Math.random() * 120;
-    const cx = W / 2, cy = H / 2;
-    return {
-      x:     cx + Math.cos(angle) * dist,
-      y:     cy + Math.sin(angle) * dist,
-      r:     Math.random() * 1.8 + 0.4,
-      vx:    (Math.random() - 0.5) * 0.28,
-      vy:    (Math.random() - 0.5) * 0.28,
-      life:  Math.random(),
-      speed: Math.random() * 0.003 + 0.001,
-    };
-  }
-
-  for (let i = 0; i < 40; i++) pts.push(mkPt());
-
-  // Only run when about section is visible
-  const aboutSec = $('#about');
-  let active = false;
-  if (aboutSec) {
-    const io = new IntersectionObserver(e => { active = e[0].isIntersecting; }, { threshold: 0.1 });
-    io.observe(aboutSec);
-  }
-
-  rafCbs.add(() => {
-    if (!active) return;
-    ctx.clearRect(0, 0, W, H);
-    pts.forEach((p, i) => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= p.speed;
-      if (p.life <= 0) pts[i] = mkPt();
-
-      const alpha = Math.min(p.life / 0.4, 1) * 0.6;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,122,0,${alpha})`;
-      ctx.fill();
-    });
-  });
-}
-
-/* ─── FUTURISTIC HOLOGRAPHIC GRID BACKGROUND ─────────────── */
+/* ─── PREMIUM ORANGE LUXURY CURSOR LIGHTING ──────────────── */
 function initHologramBackground() {
   const canvas = $('#hologram-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  let W, H;
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  /* GPU promotion */
+  canvas.style.willChange = 'transform';
+  canvas.style.transform = 'translateZ(0)';
+  canvas.style.backfaceVisibility = 'hidden';
 
-  // Perspective Parameters
-  const cy = H * 0.55; // Horizon Y
-  const fov = H * 0.45; // Field of View projection scale
-  const yFloor = 220; // 3D Y coordinate of Floor
-  const yCeiling = -220; // 3D Y coordinate of Ceiling
-  const zMin = 0.2; // Nearest depth
-  const zMax = 4.8; // Horizon depth
+  const mobile = isMobile();
 
-  let scrollOffset = 0;
-  const scrollSpeed = 0.003; // grid scrolling speed
+  /* ── Palette ─────────────────────────────────────────────── */
+  const C_PRIMARY = '255,122,0';   // #ff7a00
+  const C_SECONDARY = '255,149,0';   // #ff9500
+  const C_HIGHLIGHT = '255,179,71';  // #ffb347
 
-  // Mouse interactivity
-  let mouseX = W / 2;
-  let mouseY = H / 2;
-  let targetMouseX = W / 2;
-  let targetMouseY = H / 2;
+  /* ── Canvas sizing ───────────────────────────────────────── */
+  let W = window.innerWidth, H = window.innerHeight;
 
-  window.addEventListener('mousemove', (e) => {
-    targetMouseX = e.clientX;
-    targetMouseY = e.clientY;
-  });
-
-  // Energy Pulses / Ripples array
-  const ripples = [];
-  window.addEventListener('mousedown', (e) => {
-    ripples.push({
-      x: e.clientX,
-      y: e.clientY,
-      radius: 0,
-      maxRadius: 180,
-      speed: 2.5,
-      opacity: 0.8
-    });
-  });
-
-  // Mouse moves trigger light pulses occasionally
-  let lastMove = 0;
-  window.addEventListener('mousemove', (e) => {
-    const now = performance.now();
-    if (now - lastMove > 100) { // Throttle mousemove ripples
-      ripples.push({
-        x: e.clientX,
-        y: e.clientY,
-        radius: 0,
-        maxRadius: 60,
-        speed: 1.5,
-        opacity: 0.3
-      });
-      lastMove = now;
-    }
-  });
-
-  // Floating 3D Data Particles
-  const particles = [];
-  const particleLabels = [
-    'SYS_RUN', 'GRID_ACTIVE', '0xFA80', 'NODE_92', 'AI_CORE_UP',
-    'FLOW_RATE_0.8', 'SYS_OK', 'UNIT_C9', 'SYNC_88%', 'AI_STREAM_1',
-    '0x0C7A', 'DB_LINK_ACTIVE', 'GRID_v2.6', 'ALGO_LOAD', 'PROCESSOR_0'
+  /* ── Slow ambient blobs (always-on warmth) ───────────────── */
+  const ambientBlobs = [
+    { nx: 0.15, ny: 0.3, r: 520, speed: 0.00028, angle: 0, opacity: mobile ? 0.018 : 0.030 },
+    { nx: 0.85, ny: 0.72, r: 600, speed: 0.00018, angle: Math.PI, opacity: mobile ? 0.014 : 0.022 },
+    { nx: 0.5, ny: 0.12, r: 420, speed: 0.00022, angle: Math.PI / 2, opacity: mobile ? 0.012 : 0.018 },
   ];
+  /* Seed initial positions */
+  ambientBlobs.forEach(b => { b.x = W * b.nx; b.y = H * b.ny; b.tx = b.x; b.ty = b.y; });
 
-  for (let i = 0; i < 45; i++) {
-    particles.push(create3DParticle(true));
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    ambientBlobs.forEach(b => { b.tx = W * b.nx; b.ty = H * b.ny; });
+  }
+  resize(); // set canvas dimensions
+
+  /* ── Mouse / spotlight state ─────────────────────────────── */
+  let mouseX = W / 2, mouseY = H / 2;
+  let targetX = W / 2, targetY = H / 2;
+  let lastMoveTime = performance.now();
+  let cursorActive = true;
+
+  /* Light streak trail — last N positions */
+  const TRAIL_LEN = mobile ? 0 : 14;
+  const trailPos = [];
+
+  /* ── Inactivity fade ─────────────────────────────────────── */
+  const INACTIVE_DELAY = 3000; // ms before fade starts
+  let spotOpacity = 1.0;  // current rendered opacity (lerped)
+  let spotTarget = 1.0;  // 0 when idle, 1 when active
+
+  window.addEventListener('mousemove', e => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    lastMoveTime = performance.now();
+    cursorActive = true;
+    spotTarget = 1.0;
+  }, { passive: true });
+
+  /* ── Section intensity map ───────────────────────────────── */
+  // Hero gets a stronger glow; other sections are softer
+  function getSectionMultiplier() {
+    const el = document.elementFromPoint(mouseX, mouseY);
+    if (!el) return 0.7;
+    const section = el.closest('#hero') ? 1.0  // strongest
+      : el.closest('.project-card') ? 0.85  // cards boost
+        : el.closest('.btn-primary, .btn-secondary, .nav-cta') ? 0.9
+          : el.closest('#about, #services, #skills, #testimonials, #contact') ? 0.55
+            : 0.7;
+    return section;
   }
 
-  function create3DParticle(initRandomZ = false) {
-    return {
-      x: (Math.random() - 0.5) * 1200,
-      y: (Math.random() - 0.5) * 400,
-      z: initRandomZ ? Math.random() * (zMax - zMin) + zMin : zMax,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      speedZ: -0.0015 - Math.random() * 0.002, // moving towards camera
-      size: Math.random() * 1.5 + 0.8,
-      label: particleLabels[Math.floor(Math.random() * particleLabels.length)],
-      showLabel: Math.random() > 0.8
-    };
+  /* ── Hover bloom on cards & buttons (DOM, not canvas) ───── */
+  if (!mobile) {
+    function addBloom(el, size, strength) {
+      el.style.transition = 'box-shadow 0.4s cubic-bezier(0.16,1,0.3,1)';
+      el.style.boxShadow = `0 0 ${size}px ${Math.round(size / 3)}px rgba(${C_PRIMARY},${strength}), 0 0 ${size * 2}px rgba(${C_PRIMARY},${strength * 0.3})`;
+    }
+    function removeBloom(el) {
+      el.style.boxShadow = '';
+    }
+
+    document.addEventListener('mouseover', e => {
+      const btn = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
+      const card = e.target.closest('.project-card, .service-card');
+      if (btn) addBloom(btn, 28, 0.35);
+      if (card) addBloom(card, 45, 0.18);
+    });
+    document.addEventListener('mouseout', e => {
+      const btn = e.target.closest('.btn-primary, .btn-secondary, .nav-cta');
+      const card = e.target.closest('.project-card, .service-card');
+      if (btn) removeBloom(btn);
+      if (card) removeBloom(card);
+    });
   }
 
-  // Holographic Rings (sonar style) expanding on floor/ceiling
-  const rings = [];
-  for (let i = 0; i < 4; i++) {
-    rings.push(createHoloRing(true));
-  }
+  window.addEventListener('resize', resize, { passive: true });
 
-  function createHoloRing(initRandomRadius = false) {
-    const isFloor = Math.random() > 0.5;
-    return {
-      x: (Math.random() - 0.5) * 600,
-      y: isFloor ? yFloor : yCeiling,
-      z: Math.random() * (zMax - 1.2) + 1.2,
-      radius: initRandomRadius ? Math.random() * 150 : 0,
-      maxRadius: Math.random() * 120 + 80,
-      speed: Math.random() * 0.4 + 0.2,
-      opacity: Math.random() * 0.6 + 0.4
-    };
-  }
 
-  // Orange light beams crossing occasionally
-  let beamSweep1 = { y: H * 0.3, height: 1.5, speed: 0.35, opacity: 0.15, dir: 1 };
-  let beamSweep2 = { x: W * 0.2, width: 2.0, speed: 0.2, opacity: 0.1, dir: 1 };
-
-  // Slowly moving Scan Lines
-  let scanlineY = 0;
-
-  // Project 3D to 2D
-  function project(x, y, z) {
-    const cx = W * 0.5;
-    return {
-      x: cx + (x / z) * fov,
-      y: cy + (y / z) * fov
-    };
-  }
-
-  // Hook into the main RAF loop
+  /* ── RAF draw loop ───────────────────────────────────────── */
   rafCbs.add(() => {
-    // 1. Clear background and fill with dark premium color
-    ctx.fillStyle = '#050508';
+    const now = performance.now();
+
+    /* Inactivity check */
+    if (now - lastMoveTime > INACTIVE_DELAY) {
+      cursorActive = false;
+      spotTarget = 0.0;
+    }
+    spotOpacity = lerp(spotOpacity, spotTarget, 0.025); // very smooth fade
+
+    /* Smooth cursor lerp */
+    const lerpSpeed = mobile ? 0.08 : 0.055;
+    mouseX = lerp(mouseX, targetX, lerpSpeed);
+    mouseY = lerp(mouseY, targetY, lerpSpeed);
+
+    /* Trail append */
+    if (!mobile) {
+      trailPos.unshift({ x: mouseX, y: mouseY });
+      if (trailPos.length > TRAIL_LEN) trailPos.pop();
+    }
+
+    /* Section intensity */
+    const sectionMult = getSectionMultiplier();
+    const baseOpacity = (mobile ? 0.55 : 1.0) * sectionMult;
+
+    /* ── Clear canvas with pure black ── */
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#070707';
     ctx.fillRect(0, 0, W, H);
 
-    // Smooth mouse coordinates interpolation
-    mouseX = lerp(mouseX, targetMouseX, 0.08);
-    mouseY = lerp(mouseY, targetMouseY, 0.08);
+    /* ── 1. Slow ambient background warmth ── */
+    ambientBlobs.forEach(b => {
+      b.angle += b.speed;
+      b.x = b.tx + Math.cos(b.angle) * 90;
+      b.y = b.ty + Math.sin(b.angle) * 55;
 
-    scrollOffset += scrollSpeed;
-
-    // 2. Grids (Floor and Ceiling)
-    // Draw Longitudinal lines (converging to horizon)
-    const xMax = 1200;
-    const xStep = 100;
-
-    // Set line gradients for floor and ceiling grids to fade at horizon and screen edges
-    const gradFloor = ctx.createLinearGradient(0, cy, 0, H);
-    gradFloor.addColorStop(0, 'rgba(255, 122, 0, 0)');
-    gradFloor.addColorStop(0.18, 'rgba(255, 122, 0, 0.09)');
-    gradFloor.addColorStop(0.8, 'rgba(255, 122, 0, 0.09)');
-    gradFloor.addColorStop(1, 'rgba(255, 122, 0, 0)');
-
-    const gradCeiling = ctx.createLinearGradient(0, cy, 0, 0);
-    gradCeiling.addColorStop(0, 'rgba(255, 122, 0, 0)');
-    gradCeiling.addColorStop(0.18, 'rgba(255, 122, 0, 0.09)');
-    gradCeiling.addColorStop(0.8, 'rgba(255, 122, 0, 0.09)');
-    gradCeiling.addColorStop(1, 'rgba(255, 122, 0, 0)');
-
-    // Floor Grid Longitudinal Lines
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = gradFloor;
-    ctx.beginPath();
-    for (let x = -xMax; x <= xMax; x += xStep) {
-      const pNear = project(x, yFloor, zMin);
-      const pFar = project(x, yFloor, zMax);
-      ctx.moveTo(pNear.x, pNear.y);
-      ctx.lineTo(pFar.x, pFar.y);
-    }
-    ctx.stroke();
-
-    // Ceiling Grid Longitudinal Lines
-    ctx.strokeStyle = gradCeiling;
-    ctx.beginPath();
-    for (let x = -xMax; x <= xMax; x += xStep) {
-      const pNear = project(x, yCeiling, zMin);
-      const pFar = project(x, yCeiling, zMax);
-      ctx.moveTo(pNear.x, pNear.y);
-      ctx.lineTo(pFar.x, pFar.y);
-    }
-    ctx.stroke();
-
-    // Draw Transverse lines (Horizontal lines scrolling in perspective)
-    // Floor & Ceiling Transverse Lines
-    const numTransverse = 25;
-    const spacing = (zMax - zMin) / numTransverse;
-
-    for (let i = 0; i < numTransverse; i++) {
-      const zVal = zMin + i * spacing + (scrollOffset % spacing);
-      if (zVal >= zMax) continue;
-
-      // Sine fadeout: fades out near camera (zMin) and near horizon (zMax)
-      const alpha = Math.sin(Math.PI * (zVal - zMin) / (zMax - zMin)) * 0.12;
-
-      ctx.strokeStyle = `rgba(255, 122, 0, ${alpha})`;
-      ctx.lineWidth = 0.8;
-
-      // Floor line
-      const floorLeft = project(-xMax, yFloor, zVal);
-      const floorRight = project(xMax, yFloor, zVal);
+      const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+      g.addColorStop(0, `rgba(${C_PRIMARY},${b.opacity})`);
+      g.addColorStop(0.5, `rgba(${C_PRIMARY},${b.opacity * 0.35})`);
+      g.addColorStop(1, `rgba(${C_PRIMARY},0)`);
       ctx.beginPath();
-      ctx.moveTo(floorLeft.x, floorLeft.y);
-      ctx.lineTo(floorRight.x, floorRight.y);
-      ctx.stroke();
-
-      // Ceiling line
-      const ceilLeft = project(-xMax, yCeiling, zVal);
-      const ceilRight = project(xMax, yCeiling, zVal);
-      ctx.beginPath();
-      ctx.moveTo(ceilLeft.x, ceilLeft.y);
-      ctx.lineTo(ceilRight.x, ceilRight.y);
-      ctx.stroke();
-    }
-
-    // 3. Holographic Rings expanding along planes
-    rings.forEach((ring, idx) => {
-      ring.radius += ring.speed;
-      if (ring.radius > ring.maxRadius) {
-        rings[idx] = createHoloRing(false);
-        return;
-      }
-
-      const ringAlpha = (1 - ring.radius / ring.maxRadius) * Math.sin(Math.PI * (ring.z - zMin) / (zMax - zMin)) * 0.15;
-      if (ringAlpha <= 0) return;
-
-      const center = project(ring.x, ring.y, ring.z);
-      const radX = (ring.radius / ring.z) * 1.5;
-      const radY = radX * 0.18; // Perspective flattening ratio
-
-      ctx.strokeStyle = `rgba(255, 122, 0, ${ringAlpha})`;
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.ellipse(center.x, center.y, radX, radY, 0, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
     });
 
-    // 4. Subtle depth fog at the horizon
-    const fogHeight = H * 0.12;
-    const fogGrad = ctx.createLinearGradient(0, cy - fogHeight, 0, cy + fogHeight);
-    fogGrad.addColorStop(0, 'rgba(5, 5, 8, 0)');
-    fogGrad.addColorStop(0.35, '#050508');
-    fogGrad.addColorStop(0.65, '#050508');
-    fogGrad.addColorStop(1, 'rgba(5, 5, 8, 0)');
+    /* ── 2. Cursor spotlight (only when active or fading) ── */
+    if (spotOpacity > 0.005) {
+      const so = spotOpacity * baseOpacity;
 
-    ctx.fillStyle = fogGrad;
-    ctx.fillRect(0, cy - fogHeight, W, fogHeight * 2);
+      /* Wide corona — warm ambient spill */
+      const r1 = mobile ? 260 : 460;
+      const g1 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r1);
+      g1.addColorStop(0, `rgba(${C_PRIMARY},${0.10 * so})`);
+      g1.addColorStop(0.35, `rgba(${C_PRIMARY},${0.048 * so})`);
+      g1.addColorStop(0.65, `rgba(${C_SECONDARY},${0.018 * so})`);
+      g1.addColorStop(1, `rgba(${C_PRIMARY},0)`);
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, r1, 0, Math.PI * 2);
+      ctx.fillStyle = g1;
+      ctx.fill();
 
-    // 5. Floating 3D Data Particles
-    particles.forEach((p, idx) => {
-      p.z += p.speedZ;
-      p.x += p.vx * 0.05;
-      p.y += p.vy * 0.05;
+      /* Mid glow — warm focused light */
+      const r2 = mobile ? 130 : 210;
+      const g2 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r2);
+      g2.addColorStop(0, `rgba(${C_SECONDARY},${0.18 * so})`);
+      g2.addColorStop(0.4, `rgba(${C_PRIMARY},${0.09 * so})`);
+      g2.addColorStop(1, `rgba(${C_PRIMARY},0)`);
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, r2, 0, Math.PI * 2);
+      ctx.fillStyle = g2;
+      ctx.fill();
 
-      if (p.z <= zMin) {
-        particles[idx] = create3DParticle(false);
-        return;
-      }
+      /* Hot core — bright highlight centre */
+      const r3 = mobile ? 55 : 80;
+      const g3 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, r3);
+      g3.addColorStop(0, `rgba(${C_HIGHLIGHT},${0.22 * so})`);
+      g3.addColorStop(0.45, `rgba(${C_SECONDARY},${0.10 * so})`);
+      g3.addColorStop(1, `rgba(${C_PRIMARY},0)`);
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, r3, 0, Math.PI * 2);
+      ctx.fillStyle = g3;
+      ctx.fill();
 
-      const pos = project(p.x, p.y, p.z);
-      
-      // Calculate opacity and size
-      const alpha = Math.sin(Math.PI * (p.z - zMin) / (zMax - zMin)) * 0.35;
-      const sizeOnScreen = (p.size / p.z) * 1.2;
-
-      // Draw particle dot
-      if (pos.x >= 0 && pos.x <= W && pos.y >= 0 && pos.y <= H) {
-        ctx.fillStyle = `rgba(255, 122, 0, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, sizeOnScreen, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Draw small tech label
-        if (p.showLabel && alpha > 0.08 && p.z < 2.5) {
-          ctx.strokeStyle = `rgba(255, 122, 0, ${alpha * 0.3})`;
-          ctx.lineWidth = 0.5;
+      /* ── 3. Motion light-streak trail ── */
+      if (!mobile && trailPos.length > 1) {
+        trailPos.forEach((pt, i) => {
+          const t = 1 - i / TRAIL_LEN;  // 1 → 0 (newest → oldest)
+          const alpha = t * t * 0.045 * so; // quadratic falloff
+          const rT = 35 * t;
+          if (alpha < 0.002) return;
+          const gT = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, rT);
+          gT.addColorStop(0, `rgba(${C_HIGHLIGHT},${alpha})`);
+          gT.addColorStop(1, `rgba(${C_PRIMARY},0)`);
           ctx.beginPath();
-          ctx.moveTo(pos.x, pos.y);
-          ctx.lineTo(pos.x + 12, pos.y - 10);
-          ctx.lineTo(pos.x + 24, pos.y - 10);
-          ctx.stroke();
-
-          ctx.fillStyle = `rgba(255, 122, 0, ${alpha * 0.75})`;
-          ctx.font = '7px monospace';
-          ctx.fillText(p.label, pos.x + 28, pos.y - 8);
-        }
+          ctx.arc(pt.x, pt.y, rT, 0, Math.PI * 2);
+          ctx.fillStyle = gT;
+          ctx.fill();
+        });
       }
-    });
-
-    // 6. Orange Light Beams sweeping
-    // Horizontal scanning sweep line (moves down)
-    scanlineY = (scanlineY + 0.8) % H;
-    const scanGrad = ctx.createLinearGradient(0, scanlineY - 120, 0, scanlineY + 120);
-    scanGrad.addColorStop(0, 'rgba(255, 122, 0, 0)');
-    scanGrad.addColorStop(0.5, 'rgba(255, 122, 0, 0.016)');
-    scanGrad.addColorStop(1, 'rgba(255, 122, 0, 0)');
-    ctx.fillStyle = scanGrad;
-    ctx.fillRect(0, scanlineY - 120, W, 240);
-
-    // Faint horizontal laser line
-    ctx.strokeStyle = 'rgba(255, 122, 0, 0.04)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(0, scanlineY);
-    ctx.lineTo(W, scanlineY);
-    ctx.stroke();
-
-    // Occasional crossing light beams
-    beamSweep1.y += beamSweep1.speed * beamSweep1.dir;
-    if (beamSweep1.y > H || beamSweep1.y < 0) beamSweep1.dir *= -1;
-
-    const bGrad1 = ctx.createLinearGradient(0, beamSweep1.y - 4, 0, beamSweep1.y + 4);
-    bGrad1.addColorStop(0, 'rgba(255, 122, 0, 0)');
-    bGrad1.addColorStop(0.5, `rgba(255, 122, 0, ${beamSweep1.opacity})`);
-    bGrad1.addColorStop(1, 'rgba(255, 122, 0, 0)');
-    ctx.fillStyle = bGrad1;
-    ctx.fillRect(0, beamSweep1.y - 4, W, 8);
-
-    beamSweep2.x += beamSweep2.speed * beamSweep2.dir;
-    if (beamSweep2.x > W || beamSweep2.x < 0) beamSweep2.dir *= -1;
-
-    const bGrad2 = ctx.createLinearGradient(beamSweep2.x - 50, 0, beamSweep2.x + 50, 0);
-    bGrad2.addColorStop(0, 'rgba(255, 122, 0, 0)');
-    bGrad2.addColorStop(0.5, `rgba(255, 122, 0, ${beamSweep2.opacity})`);
-    bGrad2.addColorStop(1, 'rgba(255, 122, 0, 0)');
-    ctx.fillStyle = bGrad2;
-    ctx.fillRect(beamSweep2.x - 50, 0, 100, H);
-
-    // 7. Interactive Energy Pulses (Ripples) from Mouse
-    ripples.forEach((rip, idx) => {
-      rip.radius += rip.speed;
-      if (rip.radius > rip.maxRadius) {
-        ripples.splice(idx, 1);
-        return;
-      }
-      const ripAlpha = (1 - rip.radius / rip.maxRadius) * rip.opacity;
-      
-      // Draw circular ring
-      ctx.strokeStyle = `rgba(255, 122, 0, ${ripAlpha * 0.15})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(rip.x, rip.y, rip.radius, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Subtle glow ring
-      ctx.strokeStyle = `rgba(255, 122, 0, ${ripAlpha * 0.05})`;
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.arc(rip.x, rip.y, rip.radius, 0, Math.PI * 2);
-      ctx.stroke();
-    });
-
-    // 8. Custom Tech Cursor UI reticle on the background canvas
-    if (!isMobile()) {
-      ctx.strokeStyle = 'rgba(255, 122, 0, 0.15)';
-      ctx.lineWidth = 0.5;
-
-      // Small rotating brackets or lines around cursor
-      const rot = (performance.now() * 0.0008) % (Math.PI * 2);
-      
-      ctx.save();
-      ctx.translate(mouseX, mouseY);
-      ctx.rotate(rot);
-      
-      // Draw outer target ticks
-      ctx.beginPath();
-      for (let a = 0; a < 4; a++) {
-        const angle = (a * Math.PI) / 2;
-        const x1 = Math.cos(angle) * 12;
-        const y1 = Math.sin(angle) * 12;
-        const x2 = Math.cos(angle) * 18;
-        const y2 = Math.sin(angle) * 18;
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-      }
-      ctx.stroke();
-      ctx.restore();
-
-      // Mouse position coordinates display text on canvas (aligned next to cursor)
-      ctx.fillStyle = 'rgba(255, 122, 0, 0.25)';
-      ctx.font = '6.5px monospace';
-      ctx.fillText(`[X:${Math.round(mouseX)} Y:${Math.round(mouseY)}]`, mouseX + 15, mouseY + 18);
     }
+
+    /* ── 4. Resting ambient glow when idle ── */
+    if (spotOpacity < 0.98) {
+      const idleAlpha = (1 - spotOpacity) * 0.030;
+      const rI = 500;
+      const gI = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, rI);
+      gI.addColorStop(0, `rgba(${C_PRIMARY},${idleAlpha})`);
+      gI.addColorStop(0.6, `rgba(${C_PRIMARY},${idleAlpha * 0.3})`);
+      gI.addColorStop(1, `rgba(${C_PRIMARY},0)`);
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, rI, 0, Math.PI * 2);
+      ctx.fillStyle = gI;
+      ctx.fill();
+    }
+  });
+}
+
+function triggerPageTransition(url) {
+  const overlay = $('#page-transition');
+  if (overlay) {
+    overlay.classList.add('active');
+    const sweep = overlay.querySelector('.transition-sweep');
+    if (sweep) {
+      sweep.style.transition = 'none';
+      sweep.style.left = '-150%';
+      sweep.offsetHeight; // force reflow
+      sweep.style.transition = 'left 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      sweep.style.left = '150%';
+    }
+    setTimeout(() => {
+      window.location.href = url;
+    }, 600);
+  } else {
+    window.location.href = url;
+  }
+}
+
+function initPageTransitions() {
+  const overlay = $('#page-transition');
+  if (!overlay) return;
+
+  // Fade out transition overlay on page load
+  requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    overlay.classList.remove('active');
+  });
+
+  // Intercept all internal page links
+  const links = $$('a[href$=".html"], a[href^="index.html"]');
+  links.forEach(link => {
+    // Skip if it's just a hash navigation on the same page
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) return;
+
+    link.addEventListener('click', e => {
+      const targetUrl = link.href;
+      // Navigate only if it's a valid link within the same origin
+      if (targetUrl && (targetUrl.includes(window.location.hostname) || targetUrl.startsWith('/') || !targetUrl.includes('://'))) {
+        e.preventDefault();
+        triggerPageTransition(href);
+      }
+    });
+  });
+}
+
+
+/* ─── SMOOTH SCROLL TO HELPER ───────────────────────────── */
+function smoothScrollTo(targetEl, duration = 1000) {
+  if (!targetEl) return;
+
+  const start = window.scrollY;
+  const target = targetEl.getBoundingClientRect().top + start;
+  const distance = target - start;
+  let startTime = null;
+
+  // Show the glow trail line
+  let glowTrail = document.getElementById('scroll-glow-trail');
+  if (!glowTrail) {
+    glowTrail = document.createElement('div');
+    glowTrail.id = 'scroll-glow-trail';
+    document.body.appendChild(glowTrail);
+  }
+
+  glowTrail.style.display = 'block';
+  glowTrail.offsetHeight; // Force reflow
+  glowTrail.style.opacity = '1';
+
+  isAutoScrolling = true;
+
+  // Quart easeInOut function
+  function easeInOutQuart(t) {
+    return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+  }
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const progress = timestamp - startTime;
+    const percentage = Math.min(progress / duration, 1);
+    const eased = easeInOutQuart(percentage);
+
+    const nextScrollY = start + distance * eased;
+    window.scrollTo(0, nextScrollY);
+
+    if (progress < duration) {
+      requestAnimationFrame(step);
+    } else {
+      window.scrollTo(0, target);
+      // Fade out glow trail
+      glowTrail.style.opacity = '0';
+      setTimeout(() => {
+        glowTrail.style.display = 'none';
+      }, 300);
+
+      // Synced targets for lightweight Lenis
+      if (typeof updateSmoothScrollTargets === 'function') {
+        updateSmoothScrollTargets(target);
+      }
+      isAutoScrolling = false;
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+/* ─── HIRE ME MODAL & WORK TOGETHER SCROLL ────────────────── */
+function initHireMeModalAndScroll() {
+  // 1. Work Together button custom scroll
+  const wtBtn = $('.btn-work-together');
+  if (wtBtn) {
+    wtBtn.addEventListener('click', e => {
+      const contactSection = $('#contact');
+      if (contactSection) {
+        e.preventDefault();
+        smoothScrollTo(contactSection, 1000);
+      }
+    });
+  }
+
+  // 2. Modal open/close controls
+  const modal = $('#hire-modal');
+  const openBtns = $$('.btn-hire-me');
+  const closeBtn = $('#close-modal-btn');
+  const form = $('#hire-form');
+
+  if (!modal) return;
+
+  function openModal() {
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; // prevent bg scrolling
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = ''; // restore bg scrolling
+  }
+
+  openBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeModal);
+  }
+
+  // Close when clicking overlay backdrop
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Close on ESC key
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // 3. Form WhatsApp submission
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const name = $('#hire-name').value;
+      const phone = $('#hire-phone').value;
+      const email = $('#hire-email').value || 'Not provided';
+      const designType = $('#hire-design-type').value;
+      const details = $('#hire-details').value;
+
+      // Format WhatsApp message text
+      const messageText = `Hello Suganesh,
+
+Name: ${name}
+
+Phone: ${phone}
+
+Email: ${email}
+
+Design Type: ${designType}
+
+Project Details:
+${details}
+
+I would like to discuss this project.`;
+
+      // Encode message text for URL
+      const encodedText = encodeURIComponent(messageText);
+      const whatsappUrl = `https://wa.me/917305290305?text=${encodedText}`;
+
+      // Open WhatsApp directly
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      closeModal();
+    });
+  }
+}
+
+
+
+/* ─── SMOOTH JS MARQUEE ─────────────────────────────────── */
+function initMarquee() {
+  const track = document.querySelector('.marquee-track');
+  if (!track) return;
+
+  const speedDesktop = 0.7;  // px per frame (~42px/s at 60fps)
+  const speedMobile  = 3;    // px per frame (fast on mobile)
+
+  let x = 0;
+  let paused = false;
+  let halfWidth = 0;
+
+  /* Measure true half-width after fonts/layout settle */
+  function measure() {
+    halfWidth = track.scrollWidth / 2;
+  }
+  measure();
+  window.addEventListener('resize', measure, { passive: true });
+
+  /* Hover pause — desktop */
+  track.addEventListener('mouseenter', () => { paused = true; });
+  track.addEventListener('mouseleave', () => { paused = false; });
+
+  /* Touch pause/resume — mobile */
+  track.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+  track.addEventListener('touchend',   () => {
+    setTimeout(() => { paused = false; }, 600);
+  }, { passive: true });
+
+  rafCbs.add(() => {
+    if (paused || halfWidth === 0) return;
+    const speed = isMobile() ? speedMobile : speedDesktop;
+    x -= speed;
+    /* Silent reset: when we've scrolled exactly one full set, jump back */
+    if (x <= -halfWidth) x += halfWidth;
+    track.style.transform = `translate3d(${x}px, 0, 0)`;
   });
 }
 
 /* ─── INIT ───────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  initPageTransitions();
   startRAF();
   initCursor();
   initScrollProgress();
@@ -1327,5 +1305,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initParallax();
   initServiceCards();
   initAmbientBg();
-  initAboutParticles();
+  initHireMeModalAndScroll();
+  initMarquee();
 });
