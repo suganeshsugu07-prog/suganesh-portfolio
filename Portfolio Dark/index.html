@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SwizzZ – Creative Designer &amp; Visual Storyteller</title>
+  <meta name="description"
+    content="Award-winning graphic and creative designer crafting immersive brand identities, digital campaigns, and cinematic visual experiences. Available for global projects." />
+  <meta name="keywords"
+    content="graphic designer, creative designer, brand identity, UI UX, motion design, visual designer, portfolio" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SwizzZ – Creative Designer" />
+  <meta property="og:description"
+    content="Crafting immersive brand identities, digital campaigns, and cinematic visual experiences." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Clash Display (self-hosted via font-face trick with a CDN) -->
+  <style>
+    @import url('https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap');
+  </style>
+
+  <style>
+    html,
+    body {
+      background-color: #070707 !important;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23070707'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23FF7A00' font-size='36' font-weight='900'>A</text></svg>" />
+</head>
+
+<body>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition" class="active" aria-hidden="true">
+    <div class="transition-sweep"></div>
+  </div>
+
+  <!-- ───────────────────────────────────────────
+       SCROLL PROGRESS
+  ─────────────────────────────────────────── -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ───────────────────────────────────────────
+       CUSTOM CURSOR
+  ─────────────────────────────────────────── -->
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="cursor-label" aria-hidden="true">VIEW</div>
+
+  <canvas id="hologram-canvas" aria-hidden="true"></canvas>
+
+  <!-- ───────────────────────────────────────────
+       PRELOADER
+  ─────────────────────────────────────────── -->
+  <div id="preloader" aria-hidden="true" role="status">
+    <div class="pre-noise"></div>
+    <div class="pre-glow"></div>
+
+    <p class="pre-logo">
+      <span class="word">
+        <span>S</span><span>w</span><span>i</span><span>z</span><span>z</span><span>Z</span>
+      </span>
+    </p>
+
+    <p class="pre-tagline">Creative Designer &amp; Visual Storyteller</p>
+
+    <div class="pre-bar-wrap">
+      <div class="pre-bar-track">
+        <div class="pre-bar-fill"></div>
+      </div>
+      <p class="pre-counter" style="text-align:right;margin-top:12px;">0%</p>
+    </div>
+
+    <!-- wipe panels -->
+    <div class="pre-panels">
+      <div class="pre-panel"></div>
+      <div class="pre-panel"></div>
+      <div class="pre-panel"></div>
+      <div class="pre-panel"></div>
+      <div class="pre-panel"></div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────────────
+       PROJECT OVERLAY / LIGHTBOX
+  ─────────────────────────────────────────── -->
+  <div id="project-overlay" role="dialog" aria-modal="true" aria-label="Project Detail">
+    <div class="overlay-lens"></div>
+    <div class="overlay-content">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────────────
+       NAVIGATION
+  ─────────────────────────────────────────── -->
+  <header>
+    <nav id="navbar" role="navigation" aria-label="Main Navigation">
+      <a href="#hero" class="nav-logo" aria-label="SwizzZ Home">
+        SwizzZ<span class="dot">.</span>
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#projects">Work</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+      </ul>
+
+
+
+      <!-- PREMIUM 3-LINE MENU -->
+
+      <div class="menu-wrap">
+
+        <button class="nav-menu-btn" id="navMenu" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="floating-menu" id="floatingMenu">
+
+          <a href="#home" class="menu-item">
+            <span>HOME</span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="#about" class="menu-item">
+            <span>ABOUT</span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="#services" class="menu-item">
+            <span>SERVICES</span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="#projects" class="menu-item">
+            <span>WORKS</span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="#contact" class="menu-item hire-btn">
+            <span>HIRE ME</span>
+            <span class="arrow">↗</span>
+          </a>
+
+        </div>
+
+      </div>
+
+      <style>
+        .menu-wrap {
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .nav-menu-btn {
+          width: 32px;
+          height: 32px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+          padding: 0;
+          z-index: 9999;
+        }
+
+        .nav-menu-btn span {
+          width: 18px;
+          height: 1.5px;
+          background: #ff7a00;
+          border-radius: 999px;
+          transition: .35s ease;
+        }
+
+        .nav-menu-btn.active span:nth-child(1) {
+          transform: translateY(5.5px) rotate(45deg);
+        }
+
+        .nav-menu-btn.active span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .nav-menu-btn.active span:nth-child(3) {
+          transform: translateY(-5.5px) rotate(-45deg);
+        }
+
+        .floating-menu {
+          position: absolute;
+          top: 45px;
+          right: 0;
+
+          width: 220px;
+
+          padding: 14px;
+
+          border-radius: 22px;
+
+          background: rgba(10, 10, 10, .88);
+
+          backdrop-filter: blur(20px);
+
+          border: 1px solid rgba(255, 122, 0, .15);
+
+          box-shadow:
+            0 15px 40px rgba(0, 0, 0, .45),
+            0 0 25px rgba(255, 122, 0, .08);
+
+          opacity: 0;
+          visibility: hidden;
+
+          transform:
+            translateY(-10px) scale(.95);
+
+          transition: .35s ease;
+        }
+
+        .floating-menu.active {
+          opacity: 1;
+          visibility: visible;
+          transform:
+            translateY(0) scale(1);
+        }
+
+        .menu-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          padding: 13px 15px;
+
+          border-radius: 14px;
+
+          color: #fff;
+          text-decoration: none;
+
+          font-size: .85rem;
+          font-weight: 600;
+
+          transition: .3s ease;
+
+          margin-bottom: 6px;
+        }
+
+        .menu-item:last-child {
+          margin-bottom: 0;
+        }
+
+        .menu-item:hover {
+          background: rgba(255, 122, 0, .08);
+          color: #ff7a00;
+          transform: translateX(4px);
+        }
+
+        .arrow {
+          opacity: 0;
+          transition: .3s ease;
+        }
+
+        .menu-item:hover .arrow {
+          opacity: 1;
+        }
+
+        .hire-btn {
+          background:
+            linear-gradient(135deg,
+              rgba(255, 122, 0, .22),
+              rgba(255, 122, 0, .08));
+
+          border: 1px solid rgba(255, 122, 0, .18);
+        }
+
+        .hire-btn:hover {
+          background:
+            linear-gradient(135deg,
+              rgba(255, 122, 0, .35),
+              rgba(255, 122, 0, .15));
+        }
+      </style>
+
+      <script>
+
+        const menuBtn =
+          document.getElementById("navMenu");
+
+        const menu =
+          document.getElementById("floatingMenu");
+
+        menuBtn.addEventListener("click", () => {
+
+          menuBtn.classList.toggle("active");
+
+          menu.classList.toggle("active");
+
+        });
+
+        document.addEventListener("click", (e) => {
+
+          if (
+            !menu.contains(e.target)
+            &&
+            !menuBtn.contains(e.target)
+          ) {
+            menu.classList.remove("active");
+            menuBtn.classList.remove("active");
+          }
+
+        });
+
+      </script>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ───────────────────────────────────────────
+         HERO
+    ─────────────────────────────────────────── -->
+    <section id="hero" aria-labelledby="hero-heading">
+      <!-- Layer 1: Black background (handled by #hologram-canvas & body bg) -->
+      <div class="hero-bg">
+        <div class="hero-bg-images" aria-hidden="true">
+          <img src="project_brand.png" alt="" loading="eager" />
+          <img src="project_digital.png" alt="" loading="eager" />
+          <img src="project_packaging.png" alt="" loading="eager" />
+          <img src="project_motion.png" alt="" loading="eager" />
+          <img src="project_web.png" alt="" loading="eager" />
+          <img src="project_brand.png" alt="" loading="eager" />
+        </div>
+        <div class="hero-gradient" aria-hidden="true"></div>
+      </div>
+
+      <!-- Layer 2: StarCloud particle effect -->
+      <!-- Heavy canvas effects removed for premium Framer-style performance -->
+      <div class="hero-starcloud-glow" aria-hidden="true" data-parallax="0.05"></div>
+
+      <!-- Floating SWIZZZ Keys Effect -->
+      <div class="hero-floating-keys" aria-hidden="true">
+        <img src="uploads/swizzz_keys_transparent.png" alt="SWIZZZ Floating Keys">
+      </div>
+
+      <div class="hero-inner">
+        <p class="eyebrow hero-eyebrow" style="margin-bottom:32px">
+          Open for Projects — 2026
+        </p>
+
+        <h1 class="hero-heading" id="hero-heading">
+          <span class="line"><span class="line-inner">TURNING</span></span>
+          <span class="line"><span class="line-inner accent">VIEWS INTO</span></span>
+          <span class="line"><span class="line-inner">VISUALS<span class="accent-orange">.</span></span></span>
+        </h1>
+
+        <div class="hero-sub">
+
+
+          <div class="hero-ctas">
+            <a href="#projects" class="btn-primary">
+              <span>View Work</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#contact" class="btn-secondary btn-hire-me">
+              <span>Hire Me</span>
+            </a>
+            <style>
+              @media (max-width: 768px) {
+                .hero-ctas a {
+                  font-size: 12px !important;
+                  white-space: nowrap;
+                }
+              }
+            </style>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         MARQUEE
+    ─────────────────────────────────────────── -->
+    <div class="marquee-section" aria-hidden="true">
+      <div class="marquee-track">
+        <!-- Set A -->
+        <span class="marquee-item">Brand Identity <span class="sep"></span></span>
+        <span class="marquee-item">Social Media Design <span class="sep"></span></span>
+        <span class="marquee-item">YouTube Thumbnails <span class="sep"></span></span>
+        <span class="marquee-item">UI / UX Design <span class="sep"></span></span>
+        <span class="marquee-item">Packaging Design <span class="sep"></span></span>
+        <span class="marquee-item">Flyer &amp; Print Design <span class="sep"></span></span>
+        <span class="marquee-item">LinkedIn Cover Design <span class="sep"></span></span>
+        <span class="marquee-item">Typography <span class="sep"></span></span>
+        <!-- Set B — exact duplicate for seamless loop -->
+        <span class="marquee-item">Brand Identity <span class="sep"></span></span>
+        <span class="marquee-item">Social Media Design <span class="sep"></span></span>
+        <span class="marquee-item">YouTube Thumbnails <span class="sep"></span></span>
+        <span class="marquee-item">UI / UX Design <span class="sep"></span></span>
+        <span class="marquee-item">Packaging Design <span class="sep"></span></span>
+        <span class="marquee-item">Flyer &amp; Print Design <span class="sep"></span></span>
+        <span class="marquee-item">LinkedIn Cover Design <span class="sep"></span></span>
+        <span class="marquee-item">Typography <span class="sep"></span></span>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────
+         PROJECTS
+    ─────────────────────────────────────────── -->
+    <section id="projects" class="section" aria-labelledby="projects-heading">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-title-block">
+            <p class="eyebrow fade-up">Selected Work</p>
+            <h2 class="heading-xl fade-up" id="projects-heading" style="transition-delay:0.1s">
+              Case Studies &amp;<br />Creative Projects
+            </h2>
+          </div>
+          <p class="section-meta fade-up" style="transition-delay:0.2s">
+            Each project is a unique visual journey — from strategy and concept through to the final pixel. Hover to
+            pause.
+          </p>
+        </div>
+      </div>
+
+      <div class="carousel-outer" id="carousel-outer" role="region" aria-label="Project Carousel">
+        <div class="carousel-track" id="carousel-track">
+
+          <article class="project-card" id="project-card-1" tabindex="0" role="button"
+            aria-label="Social Media Poster Design">
+            <div class="project-card-img project-card-img--social">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_social.jpg" alt="Social Media Poster Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">01</span>
+              <h3 class="project-card-title">Social Media Poster Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Social Media</span><span class="project-tag">Ad
+                  Creative</span><span class="project-tag">Marketing Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <article class="project-card" id="project-card-2" tabindex="0" role="button"
+            aria-label="YouTube Thumbnail Design">
+            <div class="project-card-img project-card-img--yt">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_youtube.jpg" alt="YouTube Thumbnail Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">02</span>
+              <h3 class="project-card-title">YouTube Thumbnail Design</h3>
+              <div class="project-card-tags"><span class="project-tag">YouTube</span><span
+                  class="project-tag">Thumbnail</span><span class="project-tag">CTR Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <article class="project-card" id="project-card-3" tabindex="0" role="button" aria-label="Packaging Design">
+            <div class="project-card-img project-card-img--packaging">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_packaging.jpg" alt="Packaging Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">03</span>
+              <h3 class="project-card-title">Packaging Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Packaging</span><span
+                  class="project-tag">Branding</span><span class="project-tag">Product Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <article class="project-card" id="project-card-4" tabindex="0" role="button"
+            aria-label="LinkedIn Cover Design">
+            <div class="project-card-img project-card-img--linkedin">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_linkedin.jpg" alt="LinkedIn Cover Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">04</span>
+              <h3 class="project-card-title">LinkedIn Cover Design</h3>
+              <div class="project-card-tags"><span class="project-tag">LinkedIn</span><span class="project-tag">Personal
+                  Branding</span><span class="project-tag">Banner Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <article class="project-card" id="project-card-5" tabindex="0" role="button" aria-label="Flyer Design">
+            <div class="project-card-img project-card-img--flyer">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_flyer.jpg" alt="Flyer Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">05</span>
+              <h3 class="project-card-title">Flyer Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Print Design</span><span
+                  class="project-tag">Promotional</span><span class="project-tag">Marketing</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <article class="project-card" id="project-card-6" tabindex="0" role="button" aria-label="UI/UX Design">
+            <div class="project-card-img project-card-img--uiux">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_uiux.jpg" alt="UI/UX Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body">
+              <span class="project-card-num">06</span>
+              <h3 class="project-card-title">UI/UX Design</h3>
+              <div class="project-card-tags"><span class="project-tag">UI Design</span><span class="project-tag">UX
+                  Experience</span><span class="project-tag">Web Interface</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+
+          <!-- Duplicate set B for seamless loop -->
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--social">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_social.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">01</span>
+              <h3 class="project-card-title">Social Media Poster Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Social Media</span><span class="project-tag">Ad
+                  Creative</span><span class="project-tag">Marketing Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--yt">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_youtube.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">02</span>
+              <h3 class="project-card-title">YouTube Thumbnail Design</h3>
+              <div class="project-card-tags"><span class="project-tag">YouTube</span><span
+                  class="project-tag">Thumbnail</span><span class="project-tag">CTR Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--packaging">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_packaging.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">03</span>
+              <h3 class="project-card-title">Packaging Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Packaging</span><span
+                  class="project-tag">Branding</span><span class="project-tag">Product Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--linkedin">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_linkedin.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">04</span>
+              <h3 class="project-card-title">LinkedIn Cover Design</h3>
+              <div class="project-card-tags"><span class="project-tag">LinkedIn</span><span class="project-tag">Personal
+                  Branding</span><span class="project-tag">Banner Design</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--flyer">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_flyer.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">05</span>
+              <h3 class="project-card-title">Flyer Design</h3>
+              <div class="project-card-tags"><span class="project-tag">Print Design</span><span
+                  class="project-tag">Promotional</span><span class="project-tag">Marketing</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+          </article>
+          <article class="project-card" tabindex="-1" aria-hidden="true">
+            <div class="project-card-img project-card-img--uiux">
+              <div class="card-visual-inner">
+                <img src="THumbnail/thumb_uiux.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" />
+              </div>
+            </div>
+            <div class="project-card-glow" aria-hidden="true"></div>
+            <div class="project-card-body"><span class="project-card-num">06</span>
+              <h3 class="project-card-title">UI/UX Design</h3>
+              <div class="project-card-tags"><span class="project-tag">UI Design</span><span class="project-tag">UX
+                  Experience</span><span class="project-tag">Web Interface</span></div>
+            </div>
+            <div class="project-card-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></div>
+            <script>
+              const outer = document.querySelector(".carousel-outer");
+              const track = document.querySelector(".carousel-track");
+
+              const isCarouselMobile = () => window.innerWidth <= 768;
+
+              let isDown = false;
+              let isScrollingActive = true;
+              let startX;
+              let scrollLeft;
+              let scrollTimeout;
+              let wrapOffset = 0;
+
+              // Dynamically cache the start offset of duplicate cards to prevent layout thrashing
+              function updateWrapOffset() {
+                const cards = Array.from(track.querySelectorAll('.project-card'));
+                if (cards.length >= 7 && cards[6]) {
+                  wrapOffset = cards[6].offsetLeft;
+                } else {
+                  wrapOffset = track.scrollWidth / 2;
+                }
+              }
+
+              // Initial calculation & updates on window resize or orient change
+              updateWrapOffset();
+              window.addEventListener("load", updateWrapOffset);
+              window.addEventListener("resize", updateWrapOffset);
+              window.addEventListener("orientationchange", () => setTimeout(updateWrapOffset, 200));
+
+              // Auto marquee
+              let autoSpeed = 1.5;
+
+              function autoScroll() {
+                if (isCarouselMobile()) {
+                  // Mobile Javascript scroll
+                  if (isScrollingActive && !isDown) {
+                    outer.scrollLeft += autoSpeed; // Smooth speed for mobile
+                    if (wrapOffset > 0 && outer.scrollLeft >= wrapOffset) {
+                      outer.scrollLeft -= wrapOffset;
+                    }
+                  }
+                } else {
+                  // Desktop Original scroll
+                  if (!isDown) {
+                    outer.scrollLeft += autoSpeed;
+                    if (
+                      outer.scrollLeft >=
+                      (track.scrollWidth - outer.clientWidth) / 2
+                    ) {
+                      outer.scrollLeft = 0;
+                    }
+                  }
+                }
+                requestAnimationFrame(autoScroll);
+              }
+
+              requestAnimationFrame(autoScroll);
+
+              // Seamless Scroll Wrap-Around & Resume logic on Mobile
+              let isWrapping = false;
+              outer.addEventListener("scroll", () => {
+                if (!isCarouselMobile()) return;
+                if (isWrapping || wrapOffset <= 0) return;
+
+                // Seamless Infinite Loop checks (both directions)
+                if (outer.scrollLeft >= wrapOffset) {
+                  isWrapping = true;
+                  outer.scrollLeft -= wrapOffset;
+                  if (isDown) scrollLeft -= wrapOffset;
+                  isWrapping = false;
+                } else if (outer.scrollLeft <= 0.5) {
+                  isWrapping = true;
+                  outer.scrollLeft += wrapOffset;
+                  if (isDown) scrollLeft += wrapOffset;
+                  isWrapping = false;
+                }
+              });
+
+              // Mouse Drag (for desktop / mouse users)
+              outer.addEventListener("mousedown", (e) => {
+                isDown = true;
+                isScrollingActive = false;
+                startX = e.pageX;
+                scrollLeft = outer.scrollLeft;
+                outer.style.cursor = "grabbing";
+              });
+
+              window.addEventListener("mouseup", () => {
+                isDown = false;
+                outer.style.cursor = "grab";
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                  isScrollingActive = true;
+                }, 200);
+              });
+
+              outer.addEventListener("mousemove", (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const walk = (e.pageX - startX) * 2;
+                outer.scrollLeft = scrollLeft - walk;
+              });
+
+              // Touch Swiping (on mobile we let the browser handle native touch scroll,
+              // but we capture start/end to pause/resume marquee smoothly)
+              outer.addEventListener("touchstart", (e) => {
+                isDown = true;
+                isScrollingActive = false;
+                startX = e.touches[0].pageX;
+                scrollLeft = outer.scrollLeft;
+              });
+
+              outer.addEventListener("touchend", () => {
+                isDown = false;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                  isScrollingActive = true;
+                }, 800);
+              });
+            </script>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         ABOUT
+    ─────────────────────────────────────────── -->
+    <section id="about" class="section" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-grid">
+
+          <!-- Left: circular portrait -->
+          <div class="about-visual-col">
+            <div class="about-radial-glow" aria-hidden="true" data-parallax="0.1"></div>
+            <div class="about-rotating-ring" aria-hidden="true"></div>
+
+            <div class="about-circle-wrap" id="about-portrait">
+              <img src="profile_swizzz.jpg" alt="SwizzZ – Creative Designer portrait" loading="lazy" />
+              <div class="about-circle-glow" aria-hidden="true"></div>
+              <div class="about-img-mask" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <!-- Right: content -->
+          <div class="about-content">
+            <p class="eyebrow fade-up">Who I Am</p>
+            <h3 class="heading-xl fade-up" id="about-heading" style="transition-delay:0.1s">
+              I'm <span style="color:#FF7A00;">SUGANESH</span><span class="accent-orange">.</span>
+            </h3>
+
+            <p class="body-text fade-up">
+              <em style="color:var(--white); font-style:normal; font-weight:600;">A Graphic Designer</em> based in
+              Vellore, with 2 years of creative experience at Valavan Academy. I specialize in bold,
+              scroll-stopping visuals for social media, logos, branding, and thumbnails.
+
+              Whether it's a clean website cover or a high-impact Instagram post, I bring ideas to
+              life using Photoshop, Illustrator, and Figma.
+            </p>
+
+
+
+            <!-- Glassmorphism stats -->
+            <div class="about-stats fade-up" style="transition-delay:0.3s">
+              <div class="stat-item">
+                <span class="stat-number" data-count="100" data-suffix="+">0<span class="orange">+</span></span>
+                <span class="stat-label">Projects</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number" data-count="2" data-suffix="yrs">0<span class="orange">yrs</span></span>
+                <span class="stat-label">Experience</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number" data-count="10" data-suffix="+">0<span class="orange">+</span></span>
+                <span class="stat-label">Clients</span>
+              </div>
+            </div>
+
+            <div class="hero-ctas fade-up" style="transition-delay:0.4s">
+              <a href="#contact" class="btn-primary btn-work-together">
+                <span>Work Together</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                  stroke-width="2.5" viewBox="0 0 24 24">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <button class="btn-secondary btn-hire-me" type="button">
+                <span>Hire Me</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         SERVICES
+    ─────────────────────────────────────────── -->
+    <section id="services" class="section" aria-labelledby="services-heading">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-title-block">
+            <p class="eyebrow fade-up">What I Do</p>
+            <h2 class="heading-xl fade-up" id="services-heading" style="transition-delay:0.1s">
+              Services &amp;<br />Capabilities
+            </h2>
+          </div>
+          <p class="section-meta fade-up" style="transition-delay:0.2s">
+            Every service is delivered with obsessive attention to detail, strategic thinking, and a relentless
+            commitment to visual excellence.
+          </p>
+        </div>
+
+        <div class="services-grid">
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.1s">
+              <span class="service-card-num">01</span>
+              <div class="service-icon">🎨</div>
+              <h3 class="service-title">Brand Identity</h3>
+              <p class="service-desc">Logo design, visual systems, brand guidelines, and identity packages that define
+                who
+                you are and how the world sees you.</p>
+            </div>
+          </div>
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.2s">
+              <span class="service-card-num">02</span>
+              <div class="service-icon">📱</div>
+              <h3 class="service-title">Social Media Design</h3>
+              <p class="service-desc">Scroll-stopping posts, ad creatives, and campaign visuals engineered for maximum
+                engagement and brand recall.</p>
+            </div>
+          </div>
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.3s">
+              <span class="service-card-num">03</span>
+              <div class="service-icon">🎬</div>
+              <h3 class="service-title">YouTube Thumbnails</h3>
+              <p class="service-desc">High-CTR thumbnail designs that demand clicks. Data-informed aesthetics built
+                around
+                your audience psychology.</p>
+            </div>
+          </div>
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.4s">
+              <span class="service-card-num">04</span>
+              <div class="service-icon">📦</div>
+              <h3 class="service-title">Packaging Design</h3>
+              <p class="service-desc">Product packaging that stands out on shelves and screens — combining premium
+                aesthetics with clear communication.</p>
+            </div>
+          </div>
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.5s">
+              <span class="service-card-num">05</span>
+              <div class="service-icon">🖥️</div>
+              <h3 class="service-title">UI / UX Design</h3>
+              <p class="service-desc">Clean, intuitive digital interfaces — from app screens to web dashboards — that
+                balance beauty with seamless usability.</p>
+            </div>
+          </div>
+
+          <div class="service-card-wrapper">
+            <div class="service-card fade-up" style="transition-delay:0.6s">
+              <span class="service-card-num">06</span>
+              <div class="service-icon">✍️</div>
+              <h3 class="service-title">Flyer &amp; Print Design</h3>
+              <p class="service-desc">Event flyers, promotional materials, and print-ready assets designed to capture
+                attention in any medium.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         SKILLS
+    ─────────────────────────────────────────── -->
+    <section id="skills" class="section" aria-labelledby="skills-heading">
+      <div class="container">
+        <div class="skills-inner">
+
+          <!-- Orbit system -->
+          <div class="orbit-system" aria-hidden="true">
+            <div class="orbit-core">✦</div>
+
+            <div class="orbit-ring orbit-ring-1">
+              <div class="orbit-planet" style="--angle:0deg; --radius:100px">
+                <img src="photoshop.png" alt="Photoshop" />
+                <span class="orbit-planet-label">Photoshop</span>
+              </div>
+              <div class="orbit-planet" style="--angle:180deg; --radius:100px">
+                <img src="illustrator.png" alt="Illustrator" />
+                <span class="orbit-planet-label">Illustrator</span>
+              </div>
+            </div>
+
+            <div class="orbit-ring orbit-ring-2">
+              <div class="orbit-planet" style="--angle:60deg; --radius:165px">
+                <img src="figma.png" alt="Figma" />
+                <span class="orbit-planet-label">Figma</span>
+              </div>
+              <div class="orbit-planet" style="--angle:240deg; --radius:165px">
+                <img src="canva.png" alt="Canva" />
+                <span class="orbit-planet-label">Canva</span>
+              </div>
+            </div>
+
+            <div class="orbit-ring orbit-ring-3">
+              <div class="orbit-planet" style="--angle:180deg; --radius:230px">
+                <img src="wordpress.png" alt="WordPress" />
+                <span class="orbit-planet-label">WordPress</span>
+                <style>
+                  @media (max-width: 768px) {
+                    .orbit-planet img {
+                      width: 45px !important;
+                      height: 45px !important;
+                      object-fit: contain;
+                    }
+                  }
+                </style>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skills list -->
+          <div>
+            <p class="eyebrow fade-up">Toolkit</p>
+            <h2 class="heading-xl fade-up" id="skills-heading" style="transition-delay:0.1s; margin-bottom:48px">
+              Skills &amp;<br />Software
+            </h2>
+
+            <div class="skills-list fade-up" style="transition-delay:0.2s">
+              <div class="skill-item">
+                <div class="skill-item-head">
+                  <span class="skill-name">Adobe Photoshop</span>
+                  <span class="skill-pct">90%</span>
+                </div>
+                <div class="skill-bar-track">
+                  <div class="skill-bar-fill" data-pct="90"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-item-head">
+                  <span class="skill-name">Adobe Illustrator</span>
+                  <span class="skill-pct">60%</span>
+                </div>
+                <div class="skill-bar-track">
+                  <div class="skill-bar-fill" data-pct="60"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-item-head">
+                  <span class="skill-name">Canva</span>
+                  <span class="skill-pct">90%</span>
+                </div>
+                <div class="skill-bar-track">
+                  <div class="skill-bar-fill" data-pct="90"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-item-head">
+                  <span class="skill-name">Figma</span>
+                  <span class="skill-pct">60%</span>
+                </div>
+                <div class="skill-bar-track">
+                  <div class="skill-bar-fill" data-pct="60"></div>
+                </div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-item-head">
+                  <span class="skill-name">WordPress</span>
+                  <span class="skill-pct">60%</span>
+                </div>
+                <div class="skill-bar-track">
+                  <div class="skill-bar-fill" data-pct="60"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         TESTIMONIALS
+    ─────────────────────────────────────────── -->
+    <section id="testimonials" class="section" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-title-block">
+            <p class="eyebrow fade-up">Kind Words</p>
+            <h2 class="heading-xl fade-up" id="testimonials-heading" style="transition-delay:0.1s">
+              What Clients<br />Say
+            </h2>
+          </div>
+        </div>
+
+        <div class="testimonials-carousel fade-up" style="transition-delay:0.2s">
+          <div class="testimonial-track">
+
+            <div class="testimonial-card active">
+              <p class="testimonial-quote">
+                SwizzZ delivered a brand identity that completely transformed how our audience perceives us.
+                The attention to detail and creative vision exceeded every expectation. Truly Awwwards-level work.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">R</div>
+                <div class="testimonial-info">
+                  <span class="name">Rahul Mehta</span>
+                  <span class="role">Founder, BoldBrand Studio</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <p class="testimonial-quote">
+                The YouTube thumbnails SwizzZ created boosted our CTR by over 40%. The designs are bold, clear,
+                and scroll-stopping. Our channel growth has been incredible since working together.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">P</div>
+                <div class="testimonial-info">
+                  <span class="name">Priya Sharma</span>
+                  <span class="role">Content Creator, 200K+ Subscribers</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <p class="testimonial-quote">
+                Our packaging redesign generated massive positive feedback at launch. SwizzZ understood
+                our brand DNA perfectly and translated it into a product that practically sells itself on the shelf.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">A</div>
+                <div class="testimonial-info">
+                  <span class="name">Arjun Kapoor</span>
+                  <span class="role">CEO, NaturalLeaf Co.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="testimonial-controls">
+            <div class="t-dots">
+              <div class="t-dot active" data-idx="0"></div>
+              <div class="t-dot" data-idx="1"></div>
+              <div class="t-dot" data-idx="2"></div>
+            </div>
+            <button class="t-btn" id="t-prev" aria-label="Previous testimonial">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button class="t-btn" id="t-next" aria-label="Next testimonial">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────────────────────
+         CONTACT
+    ─────────────────────────────────────────── -->
+    <section id="contact" class="section" aria-labelledby="contact-heading">
+      <div class="contact-glow" aria-hidden="true" data-parallax="-0.05"></div>
+      <div class="container">
+        <div class="contact-inner">
+          <p class="eyebrow fade-up"
+            style="display:block; width:100%; text-align:center !important; margin:0 auto; font-size:8px; letter-spacing:2px;">
+            Get In Touch
+          </p>
+          <h2 class="contact-heading fade-up" id="contact-heading" style="transition-delay:0.1s">LET'S<br />CREATE</h2>
+
+          <a href="mailto:swizzzdzign@gmail.com" class="contact-email-link fade-up" style="transition-delay:0.2s"
+            aria-label="Email SwizzZ">
+            swizzzdzign@gmail.com
+          </a>
+
+          <div class="contact-socials fade-up" style="transition-delay:0.4s">
+            <a href="https://www.behance.net/swizzzdzign" class="social-link" aria-label="Behance profile"
+              title="Behance" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M7.803 5.731c.589 0 1.119.051 1.605.155.483.103.903.264 1.253.491.35.228.622.519.814.875.192.356.288.791.288 1.306 0 .562-.126 1.03-.379 1.399-.254.37-.619.673-1.092.909.657.19 1.145.525 1.468 1.01.323.483.485 1.072.485 1.769 0 .553-.103 1.037-.311 1.453a2.96 2.96 0 01-.849 1.03 3.862 3.862 0 01-1.26.617c-.481.138-.988.207-1.52.207H2V5.731h5.803zm-.351 4.972c.46 0 .838-.109 1.13-.325.293-.218.439-.557.439-1.022 0-.262-.048-.478-.143-.649a1.02 1.02 0 00-.38-.399 1.645 1.645 0 00-.56-.198 3.4 3.4 0 00-.676-.063H4.423v2.656h3.029zm.166 5.239c.247 0 .482-.025.706-.074.225-.05.422-.131.59-.246.168-.115.302-.268.401-.459.1-.191.15-.431.15-.718 0-.573-.16-.979-.481-1.22-.321-.24-.749-.36-1.28-.36H4.423v3.077h3.195zm9.565-1.406c.273.266.682.398 1.229.398.384 0 .714-.096.991-.288.277-.191.446-.393.508-.604h1.922c-.307.955-.78 1.638-1.412 2.051-.634.413-1.4.619-2.3.619-.624 0-1.187-.101-1.687-.304a3.604 3.604 0 01-1.27-.855 3.733 3.733 0 01-.8-1.31 4.862 4.862 0 01-.277-1.654c0-.594.096-1.143.285-1.649a3.817 3.817 0 01.813-1.311 3.75 3.75 0 011.257-.867 4.082 4.082 0 011.614-.313c.66 0 1.239.127 1.736.382.497.255.909.6 1.236 1.034.327.434.562.93.706 1.487.143.558.194 1.145.151 1.76h-5.733c.021.596.199 1.028.471 1.294zm2.138-3.622c-.217-.24-.563-.36-1.035-.36-.306 0-.561.052-.766.156a1.488 1.488 0 00-.49.384 1.38 1.38 0 00-.254.499 2.52 2.52 0 00-.078.508h3.084c-.073-.51-.245-.947-.46-1.187zM15.068 7.5h4.343V8.8h-4.343V7.5z" />
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/dzign_swizzz/" class="social-link" aria-label="Instagram profile"
+              title="Instagram" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/suganesh-k-4877032b4/" class="social-link"
+              aria-label="LinkedIn profile" title="LinkedIn" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+            <a href="https://wa.me/917305290305" class="social-link" aria-label="WhatsApp" title="WhatsApp"
+              target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12.001 2.002c-5.522 0-9.999 4.477-9.999 9.999 0 1.763.456 3.42 1.252 4.86L2.001 22l5.304-1.253c1.44.796 3.097 1.252 4.86 1.252 5.522 0 9.999-4.477 9.999-9.999 0-5.522-4.477-9.999-9.999-9.999zm4.37 13.911c-.24-.067-.713-.306-1.121-.511-.408-.205-.713-.306-.97-.306-.254 0-.511.102-.919.612-.408.51-.713.612-.969.612-.255 0-.51-.102-1.019-.306-.51-.204-1.121-.612-1.631-1.121-.51-.51-.918-1.122-1.121-1.632-.204-.51-.102-.765.153-1.02.255-.255.51-.51.765-.765.255-.255.306-.408.459-.612.153-.204.051-.408 0-.612s-.459-1.122-.612-1.53c-.153-.408-.306-.765-.561-.765-.255 0-.51 0-.765.255s-1.02 1.02-1.02 2.449c0 1.428.612 2.755 1.53 3.979 2.551 3.571 5.918 5.714 9.183 5.714.255 0 .51 0 .765-.051.255-.051.918-.357 1.224-1.02.306-.663.306-1.224.204-1.326-.102-.102-.306-.204-.561-.357z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <!-- ------------------- FOOTER ------------------- -->
+  <footer id="footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="footer-copy">&copy; 2026 SwizzZ. All rights reserved.</p>
+      <p class="footer-made">Crafted with <span class="heart" aria-label="love">&#9829;</span> in India</p>
+    </div>
+  </footer>
+
+
+  <!-- Hire Me Modal Popup -->
+  <div id="hire-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-modal-btn" aria-label="Close Modal">&times;</button>
+
+      <div class="modal-header">
+        <h2 class="modal-title">Let's Build Something Amazing 🚀</h2>
+        <p class="modal-subtitle">Tell me about your project and I'll get back to you on WhatsApp.</p>
+      </div>
+
+      <form id="hire-form" class="modal-form" autocomplete="on">
+        <!-- Floating Label Inputs -->
+        <div class="form-group">
+          <input type="text" id="hire-name" name="name" required placeholder=" " />
+          <label for="hire-name">Full Name</label>
+        </div>
+
+        <div class="form-group">
+          <input type="tel" id="hire-phone" name="phone" required placeholder=" " />
+          <label for="hire-phone">Phone Number</label>
+        </div>
+
+        <div class="form-group">
+          <input type="email" id="hire-email" name="email" placeholder=" " />
+          <label for="hire-email">Email Address (optional)</label>
+        </div>
+
+        <div class="form-group dropdown-group">
+          <select id="hire-design-type" name="design_type" required>
+            <option value="" disabled selected hidden></option>
+            <option value="Social Media Poster Design">Social Media Poster Design</option>
+            <option value="YouTube Thumbnail Design">YouTube Thumbnail Design</option>
+            <option value="Logo Design">Logo Design</option>
+            <option value="Branding & Identity">Branding & Identity</option>
+            <option value="Flyer Design">Flyer Design</option>
+            <option value="Packaging Design">Packaging Design</option>
+            <option value="UI/UX Design">UI/UX Design</option>
+            <option value="Website Design">Website Design</option>
+            <option value="WordPress Website">WordPress Website</option>
+            <option value="AI Creative Design">AI Creative Design</option>
+            <option value="Other">Other</option>
+          </select>
+          <label for="hire-design-type" class="select-label">Design Type</label>
+          <div class="select-arrow"></div>
+        </div>
+
+        <div class="form-group">
+          <textarea id="hire-details" name="details" required placeholder=" " rows="4"></textarea>
+          <label for="hire-details">Project Details</label>
+          <div class="textarea-placeholder-tip">Tell me about your project, goals, timeline, references, and
+            requirements...</div>
+        </div>
+
+        <button type="submit" class="modal-submit-btn">
+          <span>Send via WhatsApp</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z" />
+          </svg>
+        </button>
+      </form>
+
+      <!-- Contact Info at bottom of popup -->
+      <div class="modal-footer">
+        <span class="footer-name">Suganesh</span>
+        <a href="https://wa.me/917305290305" target="_blank" class="footer-phone" rel="noopener">
+          <svg class="wa-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.09-3.232c1.548.92 3.195 1.406 4.887 1.408 5.48.002 9.937-4.45 9.94-9.927.002-2.654-1.03-5.148-2.908-7.028C16.288 3.342 13.797 2.31 11.14 2.308c-5.48 0-9.936 4.45-9.939 9.927-.001 1.77.464 3.5 1.347 5.03L1.517 21.05l3.902-1.024c1.552.847 3.298 1.29 5.074 1.292-.001 0-.001 0 0 0zm10.175-5.572c-.275-.137-1.62-.8-1.87-.893-.25-.092-.43-.137-.61.137-.18.275-.7.893-.86 1.072-.16.18-.32.2-.595.062-.275-.137-1.16-.427-2.21-1.366-.817-.728-1.37-1.627-1.53-1.9-.16-.276-.017-.424.12-.562.124-.125.275-.32.413-.48.14-.16.185-.275.275-.458.09-.183.046-.343-.023-.48-.068-.137-.61-1.474-.835-2.016-.22-.53-.44-.458-.61-.467-.156-.008-.336-.01-.516-.01-.18 0-.473.067-.72.336-.248.27-.945.924-.945 2.253s.967 2.61 1.103 2.793c.137.183 1.902 2.906 4.607 4.07.643.277 1.145.443 1.536.568.646.206 1.233.177 1.697.108.517-.077 1.62-.662 1.85-1.3.23-.637.23-1.182.162-1.3-.07-.116-.25-.183-.526-.32z" />
+          </svg>
+          +91 7305290305
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js" defer></script>
+
+  <!-- Enhanced inline init for font face -->
+  <script>
+    // Fallback if Clash Display doesn't load
+    document.fonts.ready.then(() => {
+      document.documentElement.classList.add('fonts-loaded');
+    });
+  </script>
+
+</body>
+
+</html>
